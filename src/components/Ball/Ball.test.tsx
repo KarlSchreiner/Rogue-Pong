@@ -5,7 +5,7 @@ import Ball from './Ball';
 
 describe('<Ball />', () => {
   test('it should mount', () => {
-    render(<Ball />);
+    render(<Ball id={0} callUpdate={0}/>);
     
     const ball = screen.getByTestId('Ball');
 

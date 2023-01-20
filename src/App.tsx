@@ -3,12 +3,13 @@ import logo from './logo.svg';
 import './App.css';
 import PongPaddle from './components/PongPaddle/PongPaddle';
 import Ball from './components/Ball/Ball';
+import ActiveGame from './components/ActiveGame/ActiveGame';
 
 function App() {
   return (
     <div className="App">
-      <PongPaddle></PongPaddle>
-      <Ball></Ball>
+      <ActiveGame></ActiveGame>
+     
     </div>
   );
 }
