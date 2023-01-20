@@ -42,7 +42,7 @@ import styles from './Ball.module.scss';
 
 interface BallProps {
   id : number
-  callUpdate : number
+  callUpdate : number //fix this to always proc 
 }
 
 const INITIAL_VELOCITY = .025;

@@ -1,5 +1,6 @@
 import React, { FC, useState } from 'react';
 import Ball from '../Ball/Ball';
+import Paddle from '../Paddle/Paddle';
 import styles from './ActiveGame.module.scss';
 
 interface ActiveGameProps {}
@@ -47,6 +48,8 @@ const ActiveGame: FC<ActiveGameProps> = () => {
   return (
   <div className={styles.ActiveGame} data-testid="ActiveGame">
      <Ball id={0} callUpdate={callUpdate}></Ball>
+     <Paddle></Paddle>
+     <Paddle></Paddle>
     
   </div>)
 };
