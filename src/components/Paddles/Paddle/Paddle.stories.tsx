@@ -5,8 +5,8 @@ export default {
   title: "Paddle",
 };
 
-export const Default = () => <Paddle />;
+// export const Default = () => <Paddle />;
 
-Default.story = {
-  name: 'default',
-};
+// Default.story = {
+//   name: 'default',
+// };

@@ -5,7 +5,7 @@ import Paddle from './Paddle';
 
 describe('<Paddle />', () => {
   test('it should mount', () => {
-    render(<Paddle />);
+    // render(<Paddle />);
     
     const paddle = screen.getByTestId('Paddle');
 

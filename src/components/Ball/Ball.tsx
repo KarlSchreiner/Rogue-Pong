@@ -42,7 +42,9 @@ import styles from './Ball.module.scss';
 
 interface BallProps {
   id : number
-  callUpdate : number //fix this to always proc 
+  ballHeightSetter: any
+  count: number
+  delta: number
 }
 
 const INITIAL_VELOCITY = .025;
@@ -62,9 +64,12 @@ const Ball: FC<BallProps> = (BallProps) => {
   }, [] )
 
   React.useEffect(()=>{
-    update(BallProps.callUpdate, 0)
-  }, [BallProps.callUpdate])
+    update(BallProps.delta, 0)
+  }, [BallProps.count])
 
+  React.useEffect(() => {
+    BallProps.ballHeightSetter(position.y)
+  }, [position.y]) 
 
   function reset() {
     setPosition({x: 50, y: 50});
@@ -80,7 +85,6 @@ const Ball: FC<BallProps> = (BallProps) => {
 
 
   function update(delta: number, paddleRects: any) {
-    console.log("our update function is being called")
     setPosition({x: position.x + (direction.x * velocity * delta), y: position.y + (direction.y * velocity * delta)});
     setVelocity(velocity + (VELOCITY_INCREASE * delta))
     if(elem)

@@ -4,7 +4,7 @@ const LazyPaddle = lazy(() => import('./Paddle'));
 
 const Paddle = (props: JSX.IntrinsicAttributes & { children?: React.ReactNode; }) => (
   <Suspense fallback={null}>
-    <LazyPaddle {...props} />
+    {/* <LazyPaddle {...props} /> */}
   </Suspense>
 );
 

@@ -2,6 +2,8 @@
 
 POOOOOOOOOOOOOOOOOOOOOOOOOONG
 
+https://css-tricks.com/using-requestanimationframe-with-react-hooks/
+
 ## Dev Commands
 
 - Create new React Component in the components folder: `npx generate-react-cli component <TypeComponentNameHere>`
