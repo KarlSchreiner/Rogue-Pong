@@ -14,12 +14,24 @@ const ActiveGame: FC<ActiveGameProps> = () => {
   const [count, setCount] = useState(0);
   const [delta, setDelta] = useState(0);
   const [ballHeight, setBallHeight] = useState(0);
+  const [leftPaddleRect, setLeftPaddleRect]  = useState({bottom: 0, top: 0, left: 0, right: 0})
+  const [rightPaddleRect, setRightPaddleRect]  = useState({bottom: 0, top: 0, left: 0, right: 0})
 
 
 
   const ballHeightSetter = (ballHeight : number) => {
     setBallHeight(ballHeight)
   }
+
+  const leftPaddleSetter = (leftPaddleRect : DOMRect) => {
+    setLeftPaddleRect(leftPaddleRect)
+  }
+
+  const rightPaddleSetter = (rightPaddleRect : DOMRect) => {
+    setRightPaddleRect(rightPaddleRect)
+  }
+
+
   // const handleIncrease = () => {
   //   setCount(count + 1);
   // };
@@ -53,10 +65,12 @@ const ActiveGame: FC<ActiveGameProps> = () => {
     return () => cancelAnimationFrame(frameId);
   }, []);
 
+  
+
   return (
   <div className={styles.ActiveGame} data-testid="ActiveGame">
-     <Ball id={0} count={count} delta={delta} ballHeightSetter={ballHeightSetter}></Ball>
-     <AIPaddle count={count} delta={delta} ballHeight={ballHeight}></AIPaddle>
+     <Ball id={0} count={count} delta={delta} ballHeightSetter={ballHeightSetter} leftPaddles={[]} rightPaddles={[rightPaddleRect]}></Ball>
+     <AIPaddle count={count} delta={delta} ballHeight={ballHeight}  rightPaddleSetter={rightPaddleSetter}></AIPaddle>
   </div>)
 };
 

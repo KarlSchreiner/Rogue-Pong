@@ -37,7 +37,7 @@
 
 // export default Ball;
 
-import React, { Component, FC, useEffect } from 'react';
+import React, { Component, FC, useEffect, useRef } from 'react';
 import styles from './Ball.module.scss';
 
 interface BallProps {
@@ -45,11 +45,13 @@ interface BallProps {
   ballHeightSetter: any
   count: number
   delta: number
+  leftPaddles: any[]
+  rightPaddles: any[]
+  // paddle: any
 }
 
 const INITIAL_VELOCITY = .025;
 const VELOCITY_INCREASE = .00001;
-let count = 0 
 
 const Ball: FC<BallProps> = (BallProps) => {
   
@@ -57,14 +59,17 @@ const Ball: FC<BallProps> = (BallProps) => {
   const [direction, setDirection] = React.useState({x: 1, y: 0});
   const [velocity, setVelocity] = React.useState(INITIAL_VELOCITY);
 
-  let elem: HTMLElement | null;
+  const ballElemRef = useRef<HTMLInputElement>(null);
+
+  
+
+
   React.useEffect(()=>{
-      elem = document.getElementById("ball"+BallProps.id);
       reset();
   }, [] )
 
   React.useEffect(()=>{
-    update(BallProps.delta, 0)
+    update(BallProps.delta)
   }, [BallProps.count])
 
   React.useEffect(() => {
@@ -77,29 +82,46 @@ const Ball: FC<BallProps> = (BallProps) => {
     while (Math.abs(tempDirection.x) <= .2 || Math.abs(tempDirection.x) >= .9) {
         const heading = randomNumberBetween(0, 2 * Math.PI)
         tempDirection = {x: Math.cos(heading), y: Math.sin(heading)}
-        console.log("look here", heading, tempDirection.x)
     }
     setDirection(tempDirection);
     setVelocity(INITIAL_VELOCITY)
   }
 
 
-  function update(delta: number, paddleRects: any) {
+  function update(delta: number, /*paddleRects: any*/) {
     setPosition({x: position.x + (direction.x * velocity * delta), y: position.y + (direction.y * velocity * delta)});
     setVelocity(velocity + (VELOCITY_INCREASE * delta))
-    if(elem)
+    if(ballElemRef.current)
     {
-      const rect = elem.getBoundingClientRect();
+      
+      // console.log("this the ball elem", ballElemRef.current.getBoundingClientRect())
 
-      if (rect.bottom >= window.innerHeight || rect.top <= 0) {
-        setDirection({x: direction.x, y: direction.y * -1})
+      console.log("rect ai paddle: " + BallProps.rightPaddles[0])
+
+
+      const ballRect = ballElemRef.current.getBoundingClientRect()
+      // const rect = BallProps.rightPaddles[0].getBoundingClientRect();
+      // console.log("the box", rect)
+
+      if (ballRect.top <= 0) {
+        setDirection({x: direction.x, y: Math.abs(direction.y)})
+      }
+
+      if (ballRect.bottom >= window.innerHeight) {
+        setDirection({x: direction.x, y: Math.abs(direction.y) * -1})
       }
 
       //todo: make this work with paddles
-      // if (paddleRects.some(r: Boolean => isCollision(r, rect))) {
-      //     setDirection({x: direction.x * -1, y: direction.y})
-      //     //todo make sure it don't glitch out and just positive or negative for enemy 
-      // }
+      //pass two arays paddle on the left and paddle on the right 
+      if (BallProps.rightPaddles.some(r => isCollision(r, ballRect))) {
+          setDirection({x: Math.abs(direction.x) * -1, y: direction.y})
+          //todo make sure it don't glitch out and just positive or negative for enemy 
+      }
+
+      if (BallProps.leftPaddles.some(r => isCollision(r, ballRect))) {
+        setDirection({x: Math.abs(direction.x), y: direction.y})
+        //todo make sure it don't glitch out and just positive or negative for enemy 
+    }
     }
       
   }
@@ -113,15 +135,15 @@ const Ball: FC<BallProps> = (BallProps) => {
     {
       return false;
     }
-    //todo: make this work with paddles
-    // return (rect1.left <= rect2.right &&
-    //     rect1.right >= rect2.left
-    //     && rect1.top <= rect2.bottom
-    //     && rect1.bottom >= rect2.top)
+    // todo: make this work with paddles
+    return (rect1.left <= rect2.right &&
+        rect1.right >= rect2.left
+        && rect1.top <= rect2.bottom
+        && rect1.bottom >= rect2.top)
   }
 
   return(
-  <div className={styles.Ball} data-testid="Ball" style={{left: `${position.x}vw`, top: `${position.y}vh`}} id={`Ball${(BallProps.id)}`} >
+  <div ref={ballElemRef} className={styles.Ball} data-testid="Ball" style={{left: `${position.x}vw`, top: `${position.y}vh`}} id={`Ball${(BallProps.id)}`} >
   </div>
   )
 };

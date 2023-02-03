@@ -8,6 +8,7 @@ interface AIPaddleProps {
   count: number;
   delta: number;
   ballHeight: number;
+  rightPaddleSetter : any;
 }
 
 const AIPaddle: FC<AIPaddleProps> = (AIPaddleProps) => {
@@ -15,13 +16,12 @@ const AIPaddle: FC<AIPaddleProps> = (AIPaddleProps) => {
 
     useEffect(()=> {
       setPosition (position + SPEED * AIPaddleProps.delta * (AIPaddleProps.ballHeight - position))
-      console.log("ai paddle", AIPaddleProps.ballHeight, position, (position + SPEED * AIPaddleProps.delta * (AIPaddleProps.ballHeight - position)))
     }, [AIPaddleProps.count])
 
 
   
   return(<div className={styles.AIPaddle} data-testid="AIPaddle">
-   <Paddle position={position}></Paddle>
+   <Paddle position={position}  paddleSetter={AIPaddleProps.rightPaddleSetter}></Paddle>
   </div>)
 };
 
