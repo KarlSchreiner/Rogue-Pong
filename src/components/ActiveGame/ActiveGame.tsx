@@ -1,8 +1,11 @@
 import React, { FC, useState } from 'react';
 import Ball from '../Ball/Ball';
 import AIPaddle from '../Paddles/AIPaddle/AIPaddle';
+import PlayerPaddle from '../Paddles/PlayerPaddle/PlayerPaddle';
 import Paddle from '../Paddles/Paddle/Paddle';
 import styles from './ActiveGame.module.scss';
+import { subscribe } from '../../util/events';
+import PlayerTeamHud from '../Hud/PlayerTeamHud/PlayerTeamHud';
 
 interface ActiveGameProps {}
 
@@ -50,10 +53,7 @@ const ActiveGame: FC<ActiveGameProps> = () => {
         setCount(prevCount => prevCount + 1);
         setDelta(delta);
 
-        // if (isLose()) {
-
-        //     handleLose()
-        // }
+        
       }
 
       lastTime = currentTime
@@ -65,12 +65,20 @@ const ActiveGame: FC<ActiveGameProps> = () => {
     return () => cancelAnimationFrame(frameId);
   }, []);
 
+
+  
+
+
+
   
 
   return (
   <div className={styles.ActiveGame} data-testid="ActiveGame">
-     <Ball id={0} count={count} delta={delta} ballHeightSetter={ballHeightSetter} leftPaddles={[]} rightPaddles={[rightPaddleRect]}></Ball>
+     <Ball id={0} count={count} delta={delta} ballHeightSetter={ballHeightSetter} leftPaddles={[leftPaddleRect]} rightPaddles={[rightPaddleRect]}></Ball>
      <AIPaddle count={count} delta={delta} ballHeight={ballHeight}  rightPaddleSetter={rightPaddleSetter}></AIPaddle>
+     <PlayerPaddle count={count} delta={delta} ballHeight={ballHeight}  leftPaddleSetter={leftPaddleSetter}></PlayerPaddle>
+
+     <PlayerTeamHud startingHealth={5}></PlayerTeamHud>
   </div>)
 };
 

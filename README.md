@@ -4,6 +4,14 @@ POOOOOOOOOOOOOOOOOOOOOOOOOONG
 
 https://css-tricks.com/using-requestanimationframe-with-react-hooks/
 
+Observer pattern custom events: https://blog.logrocket.com/using-custom-events-react/
+
+## power up ideas
+
+regenerating health -> if player uses this the player would need to sit still. If the ai used this it would be cool for a boss
+
+we could put objects in the middle. likely will get stuck and bounce around for a bit. That's a feature.
+
 ## Dev Commands
 
 - Create new React Component in the components folder: `npx generate-react-cli component <TypeComponentNameHere>`

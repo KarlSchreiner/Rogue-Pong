@@ -39,6 +39,8 @@
 
 import React, { Component, FC, useEffect, useRef } from 'react';
 import styles from './Ball.module.scss';
+import { EventNames, WhoScoredPoint } from '../../util/enums';
+import { publish } from '../../util/events';
 
 interface BallProps {
   id : number
@@ -59,9 +61,10 @@ const Ball: FC<BallProps> = (BallProps) => {
   const [direction, setDirection] = React.useState({x: 1, y: 0});
   const [velocity, setVelocity] = React.useState(INITIAL_VELOCITY);
 
+  // const [pointScoredButNotReset, setPointScoredButNotReset] = React.useState(false);
+
   const ballElemRef = useRef<HTMLInputElement>(null);
 
-  
 
 
   React.useEffect(()=>{
@@ -76,6 +79,7 @@ const Ball: FC<BallProps> = (BallProps) => {
     BallProps.ballHeightSetter(position.y)
   }, [position.y]) 
 
+  //apply default positioning of the ball and send it in a random direction
   function reset() {
     setPosition({x: 50, y: 50});
     let tempDirection = {x: 0, y: 0}
@@ -87,6 +91,29 @@ const Ball: FC<BallProps> = (BallProps) => {
     setVelocity(INITIAL_VELOCITY)
   }
 
+  function checkIfPointScored(ballRect: any) {
+    return (ballRect.right >= window.innerWidth || ballRect.left <= 0)
+  }
+
+  function handlePointScored(ballRect: any) {
+    // if (ballRect.right >= window.innerWidth) {
+    //     //playerScoreElem.textContent = parseInt(playerScoreElem.textContent) + 1
+    //     console.log("PLAYER SCORRRRRREEEDDDD WOOOOOOOOOOO!")
+    // }
+    // else {
+    //     //computerScoreElem.textContent = parseInt(computerScoreElem.textContent) + 1
+    //     console.log("ai has been pointed oof criiiiiinge... :(")
+    // }
+    // if(!pointScoredButNotReset)
+    // {
+      
+      reset()
+      publish(EventNames.pointScored, {scorer: (ballRect.right >= window.innerWidth) ? WhoScoredPoint.player : WhoScoredPoint.ai})
+      
+    // }
+
+    
+}
 
   function update(delta: number, /*paddleRects: any*/) {
     setPosition({x: position.x + (direction.x * velocity * delta), y: position.y + (direction.y * velocity * delta)});
@@ -96,7 +123,6 @@ const Ball: FC<BallProps> = (BallProps) => {
       
       // console.log("this the ball elem", ballElemRef.current.getBoundingClientRect())
 
-      console.log("rect ai paddle: " + BallProps.rightPaddles[0])
 
 
       const ballRect = ballElemRef.current.getBoundingClientRect()
@@ -121,9 +147,13 @@ const Ball: FC<BallProps> = (BallProps) => {
       if (BallProps.leftPaddles.some(r => isCollision(r, ballRect))) {
         setDirection({x: Math.abs(direction.x), y: direction.y})
         //todo make sure it don't glitch out and just positive or negative for enemy 
+      }
+      //handle this ball scoring a point
+      if (checkIfPointScored(ballRect)) {
+          handlePointScored(ballRect)
+      }
     }
-    }
-      
+
   }
 
   function randomNumberBetween(min: number, max: number) {
