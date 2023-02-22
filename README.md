@@ -12,6 +12,12 @@ regenerating health -> if player uses this the player would need to sit still. I
 
 we could put objects in the middle. likely will get stuck and bounce around for a bit. That's a feature.
 
+## Tickets
+
+Remove anys
+Handle end of game
+look into zustand
+
 ## Dev Commands
 
 - Create new React Component in the components folder: `npx generate-react-cli component <TypeComponentNameHere>`
