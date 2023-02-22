@@ -4,8 +4,10 @@ import AIPaddle from '../Paddles/AIPaddle/AIPaddle';
 import PlayerPaddle from '../Paddles/PlayerPaddle/PlayerPaddle';
 import Paddle from '../Paddles/Paddle/Paddle';
 import styles from './ActiveGame.module.scss';
-import { subscribe } from '../../util/events';
 import PlayerTeamHud from '../Hud/PlayerTeamHud/PlayerTeamHud';
+import { sides} from '../../util/enums';
+import AiTeamHud from '../Hud/AITeamHud/AITeamHud';
+import Hud from '../Hud/Hud';
 
 interface ActiveGameProps {}
 
@@ -19,6 +21,8 @@ const ActiveGame: FC<ActiveGameProps> = () => {
   const [ballHeight, setBallHeight] = useState(0);
   const [leftPaddleRect, setLeftPaddleRect]  = useState({bottom: 0, top: 0, left: 0, right: 0})
   const [rightPaddleRect, setRightPaddleRect]  = useState({bottom: 0, top: 0, left: 0, right: 0})
+  //todo handle when health is down to 0 
+  const [health, setHealth] = useState({playerHealth: 5, aiHealth: 5})
 
 
 
@@ -32,6 +36,15 @@ const ActiveGame: FC<ActiveGameProps> = () => {
 
   const rightPaddleSetter = (rightPaddleRect : DOMRect) => {
     setRightPaddleRect(rightPaddleRect)
+  }
+
+  const healthSetter = (numChanged :  number, who : sides) => {
+    if (who === sides.ai){
+      setHealth((prevValue) => ( {...prevValue, aiHealth : prevValue.aiHealth - numChanged}))
+    }
+    else{
+      setHealth((prevValue) => ( {...prevValue, playerHealth : prevValue.playerHealth - numChanged}))
+    }
   }
 
 
@@ -74,11 +87,11 @@ const ActiveGame: FC<ActiveGameProps> = () => {
 
   return (
   <div className={styles.ActiveGame} data-testid="ActiveGame">
-     <Ball id={0} count={count} delta={delta} ballHeightSetter={ballHeightSetter} leftPaddles={[leftPaddleRect]} rightPaddles={[rightPaddleRect]}></Ball>
+
+     <Ball id={0} count={count} delta={delta} ballHeightSetter={ballHeightSetter} leftPaddles={[leftPaddleRect]} rightPaddles={[rightPaddleRect]} healthSetter={healthSetter}></Ball>
      <AIPaddle count={count} delta={delta} ballHeight={ballHeight}  rightPaddleSetter={rightPaddleSetter}></AIPaddle>
      <PlayerPaddle count={count} delta={delta} ballHeight={ballHeight}  leftPaddleSetter={leftPaddleSetter}></PlayerPaddle>
-
-     <PlayerTeamHud startingHealth={5}></PlayerTeamHud>
+     <Hud health={health}></Hud>
   </div>)
 };
 

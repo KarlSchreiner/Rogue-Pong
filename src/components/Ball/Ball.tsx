@@ -39,8 +39,7 @@
 
 import React, { Component, FC, useEffect, useRef } from 'react';
 import styles from './Ball.module.scss';
-import { EventNames, WhoScoredPoint } from '../../util/enums';
-import { publish } from '../../util/events';
+import {sides } from '../../util/enums';
 
 interface BallProps {
   id : number
@@ -49,6 +48,7 @@ interface BallProps {
   delta: number
   leftPaddles: any[]
   rightPaddles: any[]
+  healthSetter: (numChanged :  number, who : sides) => void
   // paddle: any
 }
 
@@ -108,7 +108,7 @@ const Ball: FC<BallProps> = (BallProps) => {
     // {
       
       reset()
-      publish(EventNames.pointScored, {scorer: (ballRect.right >= window.innerWidth) ? WhoScoredPoint.player : WhoScoredPoint.ai})
+      BallProps.healthSetter(1,  (ballRect.right >= window.innerWidth) ? sides.ai: sides.player)
       
     // }
 

@@ -1,8 +1,6 @@
-export enum EventNames{
-    pointScored="pointScored",
-}
 
-export enum WhoScoredPoint{
+
+export enum sides{
     player = "player",
     ai = "ai"
 }
