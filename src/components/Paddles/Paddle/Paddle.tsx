@@ -2,6 +2,10 @@ import React, { FC, useEffect, Component, useRef } from 'react';
 import styles from './Paddle.module.scss';
 import { stats } from '../../../interface/stats';
 
+//sound imports
+import useSound from 'use-sound';
+const overheatSoundImport = require('./overheat.mp3')
+
 
 interface PaddleProps {
   paddleSetter : any
@@ -18,7 +22,7 @@ const Paddle: FC<PaddleProps> = (PaddleProps) => {
   const [position, setPosition] = React.useState(50);
   const [localOverheatValues, setLocalOverheatValues] = React.useState({localOverheatedTimer : 0, isOverheated: false})
   const [backgroundColor, setBackgroundColor] = React.useState(PaddleProps.backgroundColor)
-  
+  const [overheatSound, overheatSoundExposed] = useSound(overheatSoundImport)
 
   useEffect(()=> {
     if(localOverheatValues.localOverheatedTimer >= PaddleProps.stats.overheatLength){
@@ -44,6 +48,15 @@ const Paddle: FC<PaddleProps> = (PaddleProps) => {
     setPosition (newPosition)
   }, [PaddleProps.count])
 
+  useEffect(()=>{
+    console.log("color changed");
+    if(backgroundColor == "red"){
+      overheatSound()
+    }
+    else{
+      overheatSoundExposed.stop()
+    }
+  }, [backgroundColor])
 
   const paddleRef = useRef<HTMLInputElement>(null);
 

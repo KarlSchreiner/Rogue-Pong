@@ -18,6 +18,8 @@ click power ups to drive player engagmenet
 
 //it's a shop where the upgrades are random
 
+custom enemey sound for each enemey
+
 stops moving --focus points // do a check every second. 1/10 chance to stop
 goes the wrong way --iq // check every frame percent to wrong //give accleration  
 speed paddle can move

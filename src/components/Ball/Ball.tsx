@@ -1,45 +1,11 @@
-// import React, { Component, useEffect } from 'react';
-// import styles from './Ball.module.scss';
-
-// interface BallProps {}
-
-// const INITIAL_VELOCITY = .025;
-// const VELOCITY_INCREASE = .00001;
-
-// class Ball extends React.Component<BallProps>{
-  
-//   position = {x: 50, y: 50}
-
-//   componentDidMount(): void {
-//     elem = document.getElementById('')
-//   }
-
-//   // const [position, setPosition] = React.useState({x: 50, y: 50});
-//   // useEffect(() => {
-//   //   console.log("plz ")
-//   // }, [])
-
-
-//   // rect () {
-
-//   //   return document
-
-//   // }
-
-//   render() {
-//     return(
-//     <div className={styles.Ball} data-testid="Ball" style={"left" : this.position.x}>
-//       Ball Component {this.position.x}
-//     </div>
-//     )
-//   }
-// };
-
-// export default Ball;
-
 import React, { Component, FC, useEffect, useRef } from 'react';
 import styles from './Ball.module.scss';
 import {sides } from '../../util/enums';
+
+//sound imports
+import useSound from 'use-sound';
+const playerBoopSoundImport = require('./player_boop.mp3')
+const aiBoopSoundImport = require('./ai_boop.mp3')
 
 interface BallProps {
   id : number
@@ -61,6 +27,9 @@ const Ball: FC<BallProps> = (BallProps) => {
   const [position, setPosition] = React.useState({x: 50, y: 50});
   const [direction, setDirection] = React.useState({x: 1, y: 0});
   const [velocity, setVelocity] = React.useState(INITIAL_VELOCITY);
+  const [playerBoopSound, playerBoopSoundExposed] = useSound(playerBoopSoundImport)
+  const [aiBoopSound, aiBoopSoundExposed] = useSound(aiBoopSoundImport)
+
 
   // const [pointScoredButNotReset, setPointScoredButNotReset] = React.useState(false);
 
@@ -146,11 +115,14 @@ const Ball: FC<BallProps> = (BallProps) => {
       //pass two arays paddle on the left and paddle on the right 
       if (BallProps.rightPaddles.some(r => isCollision(r, ballRect))) {
           setDirection({x: Math.abs(direction.x) * -1, y: direction.y})
+          aiBoopSound()
+         
           //todo make sure it don't glitch out and just positive or negative for enemy 
       }
 
       if (BallProps.leftPaddles.some(r => isCollision(r, ballRect))) {
         setDirection({x: Math.abs(direction.x), y: direction.y})
+        playerBoopSound()
         //todo make sure it don't glitch out and just positive or negative for enemy 
       }
       //handle this ball scoring a point
