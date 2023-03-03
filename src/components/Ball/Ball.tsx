@@ -53,7 +53,8 @@ interface BallProps {
 }
 
 const INITIAL_VELOCITY = .025;
-const VELOCITY_INCREASE = .00001;
+const VELOCITY_INCREASE = .00000625;
+const MAX_VELOCITY = 0.25;
 
 const Ball: FC<BallProps> = (BallProps) => {
   
@@ -117,7 +118,11 @@ const Ball: FC<BallProps> = (BallProps) => {
 
   function update(delta: number, /*paddleRects: any*/) {
     setPosition({x: position.x + (direction.x * velocity * delta), y: position.y + (direction.y * velocity * delta)});
-    setVelocity(velocity + (VELOCITY_INCREASE * delta))
+    setVelocity(Math.min(velocity + (VELOCITY_INCREASE * delta), MAX_VELOCITY));
+    // if(Math.min(velocity + (VELOCITY_INCREASE * delta), MAX_VELOCITY) >= MAX_VELOCITY)
+    // {
+    //   console.log("max velocity reached for ball...............");
+    // }
     if(ballElemRef.current)
     {
       

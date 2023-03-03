@@ -8,6 +8,7 @@ import PlayerTeamHud from '../Hud/PlayerTeamHud/PlayerTeamHud';
 import { sides} from '../../util/enums';
 import AiTeamHud from '../Hud/AITeamHud/AITeamHud';
 import Hud from '../Hud/Hud';
+import { stats } from '../../interface/stats';
 
 interface ActiveGameProps {}
 
@@ -81,7 +82,20 @@ const ActiveGame: FC<ActiveGameProps> = () => {
 
   
 
+  
 
+let playerStats : stats = {
+  health: 5,
+  overheatChance: 20,
+  overheatLength: 1000,
+  speed: 0.3,
+};
+let aiStats : stats = {
+  health: 6,
+  overheatChance: 30,
+  overheatLength: 1000,
+  speed: 0.3,
+}
 
   
 
@@ -89,8 +103,8 @@ const ActiveGame: FC<ActiveGameProps> = () => {
   <div className={styles.ActiveGame} data-testid="ActiveGame">
 
      <Ball id={0} count={count} delta={delta} ballHeightSetter={ballHeightSetter} leftPaddles={[leftPaddleRect]} rightPaddles={[rightPaddleRect]} healthSetter={healthSetter}></Ball>
-     <AIPaddle count={count} delta={delta} ballHeight={ballHeight}  rightPaddleSetter={rightPaddleSetter}></AIPaddle>
-     <PlayerPaddle count={count} delta={delta} ballHeight={ballHeight}  leftPaddleSetter={leftPaddleSetter}></PlayerPaddle>
+     <AIPaddle stats={aiStats}count={count} delta={delta} ballHeight={ballHeight}  rightPaddleSetter={rightPaddleSetter}></AIPaddle>
+     <PlayerPaddle stats={playerStats}count={count} delta={delta} ballHeight={ballHeight}  leftPaddleSetter={leftPaddleSetter}></PlayerPaddle>
      <Hud health={health}></Hud>
   </div>)
 };

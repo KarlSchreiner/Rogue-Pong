@@ -1,27 +1,24 @@
 import React, { FC, useEffect } from 'react';
 import Paddle from '../Paddle/Paddle';
 import styles from './AIPaddle.module.scss';
+import { stats } from '../../../interface/stats';
 
-const SPEED = 0.02
 
 interface AIPaddleProps {
   count: number;
   delta: number;
   ballHeight: number;
   rightPaddleSetter : any;
+  stats: stats;
 }
 
 const AIPaddle: FC<AIPaddleProps> = (AIPaddleProps) => {
-  const [position, setPosition] = React.useState(50);
 
-    useEffect(()=> {
-      setPosition (position + SPEED * AIPaddleProps.delta * (AIPaddleProps.ballHeight - position))
-    }, [AIPaddleProps.count])
 
 
   
   return(<div className={styles.AIPaddle} data-testid="AIPaddle">
-   <Paddle position={position}  paddleSetter={AIPaddleProps.rightPaddleSetter}></Paddle>
+   <Paddle stats={AIPaddleProps.stats}count={AIPaddleProps.count} delta={AIPaddleProps.delta} ballHeight={AIPaddleProps.ballHeight}  backgroundColor={"aquamarine"} paddleSetter={AIPaddleProps.rightPaddleSetter}></Paddle>
   </div>)
 };
 

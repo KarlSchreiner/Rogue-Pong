@@ -1,41 +1,64 @@
 import React, { FC, useEffect, Component, useRef } from 'react';
 import styles from './Paddle.module.scss';
+import { stats } from '../../../interface/stats';
+
 
 interface PaddleProps {
-  position : number
   paddleSetter : any
+  count: number;
+  delta: number;
+  ballHeight: number;
+  stats : stats;
+  backgroundColor : string
 }
+
+const maxDirectionInfluence = 0.666;
 
 const Paddle: FC<PaddleProps> = (PaddleProps) => {
   const [position, setPosition] = React.useState(50);
+  const [localOverheatValues, setLocalOverheatValues] = React.useState({localOverheatedTimer : 0, isOverheated: false})
+  const [backgroundColor, setBackgroundColor] = React.useState(PaddleProps.backgroundColor)
+  
+
+  useEffect(()=> {
+    if(localOverheatValues.localOverheatedTimer >= PaddleProps.stats.overheatLength){
+      const isWrongWay = (1 === Math.floor(Math.random()*PaddleProps.stats.overheatChance))
+      setLocalOverheatValues({isOverheated: isWrongWay , localOverheatedTimer: 0 })
+      setBackgroundColor(isWrongWay ? "red" : PaddleProps.backgroundColor)
+    }
+    else {
+      setLocalOverheatValues((prevValue)=>({...prevValue, localOverheatedTimer: prevValue.localOverheatedTimer+PaddleProps.delta }))
+    }
+
+    //should leave the screen even if going wrogn way. NEED TO GIVE IT ACCELERATION
+    const direction = (PaddleProps.ballHeight - position) > maxDirectionInfluence || (PaddleProps.ballHeight - position) < -maxDirectionInfluence ? Math.sign((PaddleProps.ballHeight - position)) * maxDirectionInfluence : (PaddleProps.ballHeight - position);
+    let newPosition = position + (PaddleProps.stats.speed * PaddleProps.delta * direction) * (localOverheatValues.isOverheated ? 0 : 1)
+
+    //prevent the paddle from overshooting the ball repeatedly, which fixes jittering on lower refresh rate screens
+    if(!localOverheatValues.isOverheated && ((newPosition > PaddleProps.ballHeight && PaddleProps.ballHeight > position) || (newPosition < PaddleProps.ballHeight && PaddleProps.ballHeight < position)))
+    {
+      newPosition = PaddleProps.ballHeight
+    }
+   
+    // const newPosition = position + (PaddleProps.stats.speed * PaddleProps.delta *  (PaddleProps.ballHeight - position)) 
+    setPosition (newPosition)
+  }, [PaddleProps.count])
+
 
   const paddleRef = useRef<HTMLInputElement>(null);
 
   useEffect(() =>{
-    setPosition(PaddleProps.position);
+    setPosition(position);
     if(paddleRef.current)
     {
       
       PaddleProps.paddleSetter(paddleRef.current.getBoundingClientRect())
     }
-  }, [PaddleProps.position])
-
-
-
-
-
-  // useEffect(()=> {
-  //   if(PaddleProps.aiUpdate){
-  //   setPosition (position + SPEED * PaddleProps.aiUpdate.delta * (PaddleProps.aiUpdate.ballHeight - position))
-  //   }
-  // }, [PaddleProps.aiUpdate.count])
-
-
-
+  }, [position])
 
 
   return(
-  <div ref={paddleRef} className={styles.Paddle} data-testid="Paddle" style={{top: `${position}vh` }}>
+  <div ref={paddleRef} className={styles.Paddle} data-testid="Paddle" style={{top: `${position}vh`, backgroundColor: backgroundColor}}>
   </div>)
 };
 

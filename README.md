@@ -12,11 +12,51 @@ regenerating health -> if player uses this the player would need to sit still. I
 
 we could put objects in the middle. likely will get stuck and bounce around for a bit. That's a feature.
 
+click power ups to drive player engagmenet
+
+## upgrade ideas
+
+//it's a shop where the upgrades are random
+
+stops moving --focus points // do a check every second. 1/10 chance to stop
+goes the wrong way --iq // check every frame percent to wrong //give accleration  
+speed paddle can move
+width of paddle
+
+money printer upgrade-- prints coins on screen when ball hits coin you get upgrade money printer to get more coins
+
+health
+
+slow down region //continuos
+hole in paddle // activated lasts x seconds // how long it stays and how many uses
+
+spawn in more balls
+One sided balls
+
+more paddles // each paddle locks on to next ball
+zombie paddle
+stationary paddle //potentially has health
+
+## backend
+
+how close you made it or completion time
+
+game state how much money you have what round you are on what upgrades you have name of save
+
+get new upgrade choices endpoint
+
+purchased upgrade endpoint
+
+start round endpoint
+
+round end endpoint
+
 ## Tickets
 
 Remove anys
 Handle end of game
 look into zustand
+standardize aiVar spelling
 
 ## Dev Commands
 
