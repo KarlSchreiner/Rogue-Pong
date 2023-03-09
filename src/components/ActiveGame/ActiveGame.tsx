@@ -20,6 +20,9 @@ const ActiveGame: FC<ActiveGameProps> = () => {
   const [count, setCount] = useState(0);
   const [delta, setDelta] = useState(0);
   const [ballHeight, setBallHeight] = useState(0);
+
+  //TODO: make interface taht is an object for all the data a ball has, and have an array of objects stored in here
+  // const [ballsData, setBallsData] = useState([{}]);
   const [leftPaddleRect, setLeftPaddleRect]  = useState({bottom: 0, top: 0, left: 0, right: 0})
   const [rightPaddleRect, setRightPaddleRect]  = useState({bottom: 0, top: 0, left: 0, right: 0})
   //todo handle when health is down to 0 
