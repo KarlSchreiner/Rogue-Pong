@@ -26,7 +26,6 @@ function App() {
   return (
     <div className="App">
       <RouterProvider router={router} />
-      {/* <ActiveGame></ActiveGame> */}
      
     </div>
   );
