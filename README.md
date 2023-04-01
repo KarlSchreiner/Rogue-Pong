@@ -4,8 +4,6 @@ POOOOOOOOOOOOOOOOOOOOOOOOOONG
 
 https://css-tricks.com/using-requestanimationframe-with-react-hooks/
 
-Observer pattern custom events: https://blog.logrocket.com/using-custom-events-react/
-
 ## power up ideas
 
 regenerating health -> if player uses this the player would need to sit still. If the ai used this it would be cool for a boss
@@ -37,6 +35,10 @@ One sided balls
 more paddles // each paddle locks on to next ball
 zombie paddle
 stationary paddle //potentially has health
+
+Maybe you are shown three possible oponents with varyying rewards and you can pick one
+
+//sound effect of ball colliding is piano noise but speed of ball changes pitch
 
 ## backend
 

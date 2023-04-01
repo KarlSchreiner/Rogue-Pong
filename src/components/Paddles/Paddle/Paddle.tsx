@@ -8,8 +8,9 @@ const overheatSoundImport = require('./overheat.mp3')
 
 
 interface PaddleProps {
-  paddleSetter : any
+  paddleSetter : any //todo figure out typescript with functions!!!!!
   count: number;
+  paddleIndex: number;
   delta: number;
   ballHeight: number;
   stats : stats;
@@ -65,7 +66,7 @@ const Paddle: FC<PaddleProps> = (PaddleProps) => {
     if(paddleRef.current)
     {
       
-      PaddleProps.paddleSetter(paddleRef.current.getBoundingClientRect())
+      PaddleProps.paddleSetter(PaddleProps.paddleIndex, paddleRef.current.getBoundingClientRect())
     }
   }, [position])
 

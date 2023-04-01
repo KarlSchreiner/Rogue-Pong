@@ -9,7 +9,8 @@ const aiBoopSoundImport = require('./ai_boop.mp3')
 
 interface BallProps {
   id : number
-  ballHeightSetter: any
+  ballsIndex: number
+  ballInfoSetter: any
   count: number
   delta: number
   leftPaddles: any[]
@@ -31,8 +32,6 @@ const Ball: FC<BallProps> = (BallProps) => {
   const [aiBoopSound, aiBoopSoundExposed] = useSound(aiBoopSoundImport)
 
 
-  // const [pointScoredButNotReset, setPointScoredButNotReset] = React.useState(false);
-
   const ballElemRef = useRef<HTMLInputElement>(null);
 
 
@@ -46,7 +45,7 @@ const Ball: FC<BallProps> = (BallProps) => {
   }, [BallProps.count])
 
   React.useEffect(() => {
-    BallProps.ballHeightSetter(position.y)
+    BallProps.ballInfoSetter(BallProps.ballsIndex, {posX: position.x, posY: position.y, dirX: direction.x})
   }, [position.y]) 
 
   //apply default positioning of the ball and send it in a random direction
@@ -66,21 +65,8 @@ const Ball: FC<BallProps> = (BallProps) => {
   }
 
   function handlePointScored(ballRect: any) {
-    // if (ballRect.right >= window.innerWidth) {
-    //     //playerScoreElem.textContent = parseInt(playerScoreElem.textContent) + 1
-    //     console.log("PLAYER SCORRRRRREEEDDDD WOOOOOOOOOOO!")
-    // }
-    // else {
-    //     //computerScoreElem.textContent = parseInt(computerScoreElem.textContent) + 1
-    //     console.log("ai has been pointed oof criiiiiinge... :(")
-    // }
-    // if(!pointScoredButNotReset)
-    // {
-      
       reset()
       BallProps.healthSetter(1,  (ballRect.right >= window.innerWidth) ? sides.ai: sides.player)
-      
-    // }
 
     
 }
@@ -88,20 +74,9 @@ const Ball: FC<BallProps> = (BallProps) => {
   function update(delta: number, /*paddleRects: any*/) {
     setPosition({x: position.x + (direction.x * velocity * delta), y: position.y + (direction.y * velocity * delta)});
     setVelocity(Math.min(velocity + (VELOCITY_INCREASE * delta), MAX_VELOCITY));
-    // if(Math.min(velocity + (VELOCITY_INCREASE * delta), MAX_VELOCITY) >= MAX_VELOCITY)
-    // {
-    //   console.log("max velocity reached for ball...............");
-    // }
     if(ballElemRef.current)
-    {
-      
-      // console.log("this the ball elem", ballElemRef.current.getBoundingClientRect())
-
-
-
+    {   
       const ballRect = ballElemRef.current.getBoundingClientRect()
-      // const rect = BallProps.rightPaddles[0].getBoundingClientRect();
-      // console.log("the box", rect)
 
       if (ballRect.top <= 0) {
         setDirection({x: direction.x, y: Math.abs(direction.y)})
@@ -111,19 +86,15 @@ const Ball: FC<BallProps> = (BallProps) => {
         setDirection({x: direction.x, y: Math.abs(direction.y) * -1})
       }
 
-      //todo: make this work with paddles
-      //pass two arays paddle on the left and paddle on the right 
+
       if (BallProps.rightPaddles.some(r => isCollision(r, ballRect))) {
           setDirection({x: Math.abs(direction.x) * -1, y: direction.y})
           aiBoopSound()
-         
-          //todo make sure it don't glitch out and just positive or negative for enemy 
       }
 
       if (BallProps.leftPaddles.some(r => isCollision(r, ballRect))) {
         setDirection({x: Math.abs(direction.x), y: direction.y})
         playerBoopSound()
-        //todo make sure it don't glitch out and just positive or negative for enemy 
       }
       //handle this ball scoring a point
       if (checkIfPointScored(ballRect)) {

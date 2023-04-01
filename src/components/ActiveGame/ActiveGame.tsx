@@ -10,6 +10,8 @@ import AiTeamHud from '../Hud/AITeamHud/AITeamHud';
 import Hud from '../Hud/Hud';
 import { stats } from '../../interface/stats';
 import { useLocation } from 'react-router-dom';
+import { ballInfo } from '../../interface/ballInfo';
+import { paddleRectProperties } from '../../interface/paddleRectProperties';
 
 interface ActiveGameProps {}
 
@@ -27,27 +29,53 @@ const aiStats  = location.state?.aiStats as stats;
 
   const [count, setCount] = useState(0);
   const [delta, setDelta] = useState(0);
-  const [ballHeight, setBallHeight] = useState(0);
+  // const [ballHeight, setBallHeight] = useState(0);
+  const [balls, setBalls] = useState<ballInfo []>([{posX : 50, posY: 50, dirX: 0}, {posX : 50, posY: 50, dirX: 0}])
+  const [playerBallHeightsToUse, setPlayerBallHeightsToUse] = useState<number []>([])
+  const [AIBallHeightsToUse, setAIBallHeightsToUse] = useState<number []>([])
+
+
+
 
   //TODO: make interface taht is an object for all the data a ball has, and have an array of objects stored in here
+
+  //todo change these from leftPaddleREcts to player paddle rects 
   // const [ballsData, setBallsData] = useState([{}]);
-  const [leftPaddleRect, setLeftPaddleRect]  = useState({bottom: 0, top: 0, left: 0, right: 0})
-  const [rightPaddleRect, setRightPaddleRect]  = useState({bottom: 0, top: 0, left: 0, right: 0})
+  const [leftPaddleRects, setLeftPaddleRects]  = useState<paddleRectProperties []>([{bottom: 0, top: 0, left: 0, right: 0}, {bottom: 0, top: 0, left: 0, right: 0}])
+  const [rightPaddleRects, setRightPaddleRects]  = useState<paddleRectProperties []>([{bottom: 0, top: 0, left: 0, right: 0}, {bottom: 0, top: 0, left: 0, right: 0}])
   //todo handle when health is down to 0 
   const [health, setHealth] = useState({playerHealth: playerStats.health, aiHealth: aiStats.health})
 
 
-
-  const ballHeightSetter = (ballHeight : number) => {
-    setBallHeight(ballHeight)
+  const createNewBall = () => {
+    setBalls((prevValue) => [...prevValue, ({posX : 50, posY: 50, dirX: 0})])
   }
 
-  const leftPaddleSetter = (leftPaddleRect : DOMRect) => {
-    setLeftPaddleRect(leftPaddleRect)
+  const deleteBall = (ballsIndex :number) => {
+    setBalls((prevValue) => prevValue.splice(ballsIndex, 1))
   }
 
-  const rightPaddleSetter = (rightPaddleRect : DOMRect) => {
-    setRightPaddleRect(rightPaddleRect)
+
+  const ballInfoSetter = (index : number, newBallInfo : ballInfo ) => {
+    setBalls((prevValue) => {
+      let copyArray = [...prevValue]
+      copyArray[index] = newBallInfo
+      return copyArray
+    })
+  }
+
+  const leftPaddleSetter = (index : number, leftPaddleRect : DOMRect) => {
+    setLeftPaddleRects((prevValue) => {
+      let ArrayCopy = [...prevValue]
+      ArrayCopy[index]=leftPaddleRect
+      return ArrayCopy
+    })
+  }
+
+  const rightPaddleSetter = (index: number, rightPaddleRect : DOMRect) => {
+    setRightPaddleRects((prevValue) => {let ArrayCopy = [...prevValue]
+      ArrayCopy[index]=rightPaddleRect
+    return ArrayCopy})
   }
 
   const healthSetter = (numChanged :  number, who : sides) => {
@@ -59,11 +87,53 @@ const aiStats  = location.state?.aiStats as stats;
     }
   }
 
-
   // const handleIncrease = () => {
   //   setCount(count + 1);
   // };
 
+  const setBallHeightHelper = (isPlayer: boolean) => {
+    return [...balls].sort((a, b) => { 
+      if(a.dirX > 0 && b.dirX < 0)
+      {
+          return isPlayer ? 1 : -1;
+      } 
+      else if(a.dirX < 0 && b.dirX > 0)
+      {
+        return isPlayer ? -1 : 1
+      }
+      else if (a.dirX > 0 && b.dirX > 0)
+      {
+        return (a.posX > b.posX) ? -1 : 1
+      }
+      else
+      {
+        return a.posX > b.posX ? 1 : -1
+      }
+    }).map((ballInfo)=>ballInfo.posY)
+  }
+
+
+React.useEffect(()=>{
+  let playerBallHeightArray = setBallHeightHelper(true).slice(0, leftPaddleRects.length)
+  let playerBallHeightsToUse = new Array(leftPaddleRects.length).fill(null);
+
+  // playerBallHeightArray.forEach((ballHeight) => {
+  //   let indexToAssignHeightTo = -1
+  //   playerBallHeightsToUse.forEach((previouslyAssignedBallHeight, index) => {
+  //     if(previouslyAssignedBallHeight != null)
+  //     {
+
+  //     }
+  //   })
+  // })
+
+
+  setPlayerBallHeightsToUse(playerBallHeightsToUse)
+
+
+ setAIBallHeightsToUse(setBallHeightHelper(false))
+   
+}, [balls]);
 
   React.useEffect(()=>{
     let frameId: number;
@@ -91,16 +161,41 @@ const aiStats  = location.state?.aiStats as stats;
   }, []);
 
 
-
-
-  
-
   return (
   <div className={styles.ActiveGame} data-testid="ActiveGame">
 
-     <Ball id={0} count={count} delta={delta} ballHeightSetter={ballHeightSetter} leftPaddles={[leftPaddleRect]} rightPaddles={[rightPaddleRect]} healthSetter={healthSetter}></Ball>
-     <AIPaddle stats={aiStats}count={count} delta={delta} ballHeight={ballHeight}  rightPaddleSetter={rightPaddleSetter}></AIPaddle>
-     <PlayerPaddle stats={playerStats}count={count} delta={delta} ballHeight={ballHeight}  leftPaddleSetter={leftPaddleSetter}></PlayerPaddle>
+    
+      {balls.map((ball: ballInfo, ballsIndex: number) => {
+        return <Ball id={ballsIndex} 
+                      count={count} 
+                      delta={delta} 
+                      ballsIndex={ballsIndex}
+                      ballInfoSetter={ballInfoSetter}
+                      leftPaddles={leftPaddleRects}
+                      rightPaddles={rightPaddleRects}
+                      healthSetter={healthSetter} />
+      })}
+    
+     {rightPaddleRects.map((rect, rectIndex) => {
+      return <AIPaddle stats={aiStats}
+                      count={count}
+                      paddleIndex={rectIndex}
+                      delta={delta}
+                      ballHeight={AIBallHeightsToUse[rectIndex]}
+                     rightPaddleSetter={rightPaddleSetter} />
+        
+      })}
+
+      {leftPaddleRects.map((rect, rectIndex) => {
+        return <PlayerPaddle stats={playerStats}
+                      count={count}
+                      paddleIndex={rectIndex}
+                      delta={delta}
+                      ballHeight={playerBallHeightsToUse[rectIndex]}
+                      leftPaddleSetter={leftPaddleSetter} />
+        
+      })}
+
      <Hud health={health}></Hud>
   </div>)
 };
