@@ -9,12 +9,20 @@ import { sides} from '../../util/enums';
 import AiTeamHud from '../Hud/AITeamHud/AITeamHud';
 import Hud from '../Hud/Hud';
 import { stats } from '../../interface/stats';
+import { useLocation } from 'react-router-dom';
 
 interface ActiveGameProps {}
 
 
 
 const ActiveGame: FC<ActiveGameProps> = () => {
+  const location = useLocation();
+
+const playerStats  = location.state?.playerStats as stats;
+
+const aiStats  = location.state?.aiStats as stats;
+
+
   // console.log("re-rendered lmao")
 
   const [count, setCount] = useState(0);
@@ -26,7 +34,7 @@ const ActiveGame: FC<ActiveGameProps> = () => {
   const [leftPaddleRect, setLeftPaddleRect]  = useState({bottom: 0, top: 0, left: 0, right: 0})
   const [rightPaddleRect, setRightPaddleRect]  = useState({bottom: 0, top: 0, left: 0, right: 0})
   //todo handle when health is down to 0 
-  const [health, setHealth] = useState({playerHealth: 5, aiHealth: 5})
+  const [health, setHealth] = useState({playerHealth: playerStats.health, aiHealth: aiStats.health})
 
 
 
@@ -83,22 +91,7 @@ const ActiveGame: FC<ActiveGameProps> = () => {
   }, []);
 
 
-  
 
-  
-
-let playerStats : stats = {
-  health: 5,
-  overheatChance: 20,
-  overheatLength: 1000,
-  speed: 0.3,
-};
-let aiStats : stats = {
-  health: 6,
-  overheatChance: 30,
-  overheatLength: 1000,
-  speed: 0.3,
-}
 
   
 
