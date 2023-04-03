@@ -12,13 +12,14 @@ interface PlayerPaddleProps {
   ballHeight: number;
   leftPaddleSetter : any;
   stats: stats;
+  backgroundColor : string
 }
 
 const PlayerPaddle: FC<PlayerPaddleProps> = (PlayerPaddleProps) => {
 
 
   return(<div className={styles.PlayerPaddle} data-testid="PlayerPaddle">
-  <Paddle paddleIndex={PlayerPaddleProps.paddleIndex} stats={PlayerPaddleProps.stats} backgroundColor={"chartreuse"}count={PlayerPaddleProps.count} delta={PlayerPaddleProps.delta} ballHeight={PlayerPaddleProps.ballHeight}  paddleSetter={PlayerPaddleProps.leftPaddleSetter}></Paddle>
+  <Paddle paddleIndex={PlayerPaddleProps.paddleIndex} stats={PlayerPaddleProps.stats} backgroundColor={PlayerPaddleProps.backgroundColor}count={PlayerPaddleProps.count} delta={PlayerPaddleProps.delta} ballHeight={PlayerPaddleProps.ballHeight}  paddleSetter={PlayerPaddleProps.leftPaddleSetter}></Paddle>
   </div>)
 
 }

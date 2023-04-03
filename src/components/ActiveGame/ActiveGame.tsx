@@ -24,13 +24,16 @@ const playerStats  = location.state?.playerStats as stats;
 
 const aiStats  = location.state?.aiStats as stats;
 
+//added this to highlight switching vs not switching of paddles
+const leftPaddleColor = ["chartreuse" , "green"]
+const rightPaddleColor = ["aquamarine" , "blue"]
 
   // console.log("re-rendered lmao")
 
   const [count, setCount] = useState(0);
   const [delta, setDelta] = useState(0);
   // const [ballHeight, setBallHeight] = useState(0);
-  const [balls, setBalls] = useState<ballInfo []>([{posX : 50, posY: 50, dirX: 0}, {posX : 50, posY: 50, dirX: 0}])
+  const [balls, setBalls] = useState<ballInfo []>([{posX : 50, posY: 50, dirX: 0}, {posX : 50, posY: 50, dirX: 0}, {posX : 50, posY: 50, dirX: 0}, {posX : 50, posY: 50, dirX: 0}])
   const [playerBallHeightsToUse, setPlayerBallHeightsToUse] = useState<number []>([])
   const [AIBallHeightsToUse, setAIBallHeightsToUse] = useState<number []>([])
 
@@ -114,8 +117,47 @@ const aiStats  = location.state?.aiStats as stats;
 
 
 React.useEffect(()=>{
+  //need to add a check for is frozen
+  //first lets get a list ordered by closeness of balls of the ball heights  
   let playerBallHeightArray = setBallHeightHelper(true).slice(0, leftPaddleRects.length)
-  let playerBallHeightsToUse = new Array(leftPaddleRects.length).fill(null);
+  //create array of objects to track relationship between balls and paddles note top and bottom of rects must be divided by outerheight and multiplied by 100 to convert to relative position like ball uses 
+  let playerPaddleObjects = leftPaddleRects.map((value, leftPaddleRectsIndex) => {return {top: value.top/window.outerHeight*100, bottom: value.bottom/window.outerHeight*100, hasBeenUsed: false, mapToPlayerBallHeightArray: -1, mapToLeftPadddleRects: leftPaddleRectsIndex}})
+  playerBallHeightArray.forEach((ballHeight, indexOfBallHeight) => {
+    //just sort the playerBall objects array and give front most object next ball assignment 
+    playerPaddleObjects.sort((a , b) => {
+      //if already been used go to the back
+      if(a.hasBeenUsed && b.hasBeenUsed){
+        return 0; 
+      }
+      if(a.hasBeenUsed){
+        return 1
+      }
+      if(b.hasBeenUsed){
+        return -1
+      }
+
+      //which rect is closer to the ball?
+      let closestA = Math.abs(a.top - ballHeight) < Math.abs(a.top - ballHeight) ? Math.abs(a.top - ballHeight) : Math.abs(a.top - ballHeight);
+      let closestB = Math.abs(b.top - ballHeight) < Math.abs(b.top - ballHeight) ? Math.abs(b.top - ballHeight) :  Math.abs(b.top - ballHeight);
+      if (closestA == closestB){
+        return 0;
+      }
+      else if (closestA < closestB){
+        return -1;
+      }
+      else{
+        return 1;
+      }
+  }
+  )
+  playerPaddleObjects[0].hasBeenUsed = true;
+  playerPaddleObjects[0].mapToPlayerBallHeightArray = indexOfBallHeight;
+})
+// console.log("player paddle objects", playerPaddleObjects, playerBallHeightArray)
+let playerBallHeightArrayFinal = playerPaddleObjects.sort((a,b) => a.mapToLeftPadddleRects > b.mapToLeftPadddleRects ? 1 : -1).map((value) => playerBallHeightArray[value.mapToPlayerBallHeightArray])
+// console.log("playerBallHeightArrayFinal", playerBallHeightArrayFinal)
+setPlayerBallHeightsToUse(playerBallHeightArrayFinal)
+
 
   // playerBallHeightArray.forEach((ballHeight) => {
   //   let indexToAssignHeightTo = -1
@@ -128,7 +170,7 @@ React.useEffect(()=>{
   // })
 
 
-  setPlayerBallHeightsToUse(playerBallHeightsToUse)
+  // setPlayerBallHeightsToUse(setBallHeightHelper(true))
 
 
  setAIBallHeightsToUse(setBallHeightHelper(false))
@@ -182,7 +224,8 @@ React.useEffect(()=>{
                       paddleIndex={rectIndex}
                       delta={delta}
                       ballHeight={AIBallHeightsToUse[rectIndex]}
-                     rightPaddleSetter={rightPaddleSetter} />
+                     rightPaddleSetter={rightPaddleSetter}
+                     backgroundColor={rightPaddleColor[rectIndex]} />
         
       })}
 
@@ -192,7 +235,8 @@ React.useEffect(()=>{
                       paddleIndex={rectIndex}
                       delta={delta}
                       ballHeight={playerBallHeightsToUse[rectIndex]}
-                      leftPaddleSetter={leftPaddleSetter} />
+                      leftPaddleSetter={leftPaddleSetter}
+                      backgroundColor={leftPaddleColor[rectIndex]} />
         
       })}
 
