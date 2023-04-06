@@ -33,6 +33,7 @@ const ActiveGame: FC<ActiveGameProps> = () => {
   // const [ballHeight, setBallHeight] = useState(0);
   const [balls, setBalls] = useState<ballInfo[]>([
     { posX: 50, posY: 50, dirX: 0 },
+    { posX: 50, posY: 50, dirX: 0 },
   ]);
   const [playerBallHeightsToUse, setPlayerBallHeightsToUse] = useState<
     number[]
@@ -138,8 +139,8 @@ const ActiveGame: FC<ActiveGameProps> = () => {
     let playerPaddleObjects: paddleBallMapping[] = leftPaddleRects.map(
       (value, leftPaddleRectsIndex) => {
         return {
-          top: (value.top / window.outerHeight) * 100,
-          bottom: (value.bottom / window.outerHeight) * 100,
+          top: (value.top / window.innerHeight) * 100, //should this be inner or outter...???
+          bottom: (value.bottom / window.innerHeight) * 100,
           hasBeenUsed: false,
           mapToPlayerBallHeightArray: null,
           mapToLeftPadddleRects: leftPaddleRectsIndex,
