@@ -8,6 +8,7 @@ import {
   RouterProvider,
 } from "react-router-dom";
 import TestingMenu from './components/TestingMenu/TestingMenu';
+import ResultsScreen from './components/ResultsScreen/ResultsScreen';
 
 const router = createBrowserRouter([
   {
@@ -18,6 +19,10 @@ const router = createBrowserRouter([
     path: "/game",
     element: <ActiveGame/>,
   },
+  {
+    path: "/result",
+    element: <ResultsScreen/>
+  }
 ]);
 
 
