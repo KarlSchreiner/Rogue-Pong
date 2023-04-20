@@ -60,6 +60,7 @@ Remove anys
 Handle end of game
 look into zustand
 standardize aiVar spelling
+Return Score to result screen--this is useful as it will keep the game from breaking and also we can run experiments to see which build is better when set to 100 health on each side
 
 ## Dev Commands
 

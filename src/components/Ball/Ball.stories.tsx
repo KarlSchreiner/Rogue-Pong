@@ -1,5 +1,5 @@
 /* eslint-disable */
-import Ball from './Ball';
+import Ball from "./Ball";
 
 export default {
   title: "Ball",
