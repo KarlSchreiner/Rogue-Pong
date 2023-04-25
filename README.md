@@ -2,64 +2,78 @@
 
 POOOOOOOOOOOOOOOOOOOOOOOOOONG
 
-https://css-tricks.com/using-requestanimationframe-with-react-hooks/
+This is the first ever fully React based Pong Game.
 
-## power up ideas
+The vision for this game is a rogue-like upgrade driven experience.
 
-regenerating health -> if player uses this the player would need to sit still. If the ai used this it would be cool for a boss
+Currently the Front end is implemented with a fully functional Pong experience all within React. At the moment all upgrades are set via the introductary debug screen.
 
-we could put objects in the middle. likely will get stuck and bounce around for a bit. That's a feature.
+We plan on adding significantly more powerups and upgrades, creating a rogue-like experience where you purchase (hopefully synergistic) upgrades as you earn money from beating harder and harder opponents. We also will add a backend to store and serve player progress, AI opponents, and what upgrades can be purchased from the shop.
 
-click power ups to drive player engagmenet
-
-## upgrade ideas
-
-//it's a shop where the upgrades are random
-
-custom enemey sound for each enemey
-
-stops moving --focus points // do a check every second. 1/10 chance to stop
-speed paddle can move
-width of paddle
-
-money printer upgrade-- prints coins on screen when ball hits coin you get upgrade money printer to get more coins
-
-health
-
-slow down region //continuos
-hole in paddle // activated lasts x seconds // how long it stays and how many uses
-
-spawn in more balls
-One sided balls
-
-more paddles // each paddle locks on to next ball
-zombie paddle
-stationary paddle //potentially has health
-
-Maybe you are shown three possible oponents with varyying rewards and you can pick one
-
-//sound effect of ball colliding is piano noise but speed of ball changes pitch
-
-## backend
-
-how close you made it or completion time
-
-game state how much money you have what round you are on what upgrades you have name of save
-
-get new upgrade choices endpoint
-
-purchased upgrade endpoint
-
-start round endpoint
-
-round end endpoint
+Expected release is late 2023!
 
 ## Tickets
 
-Remove anys
-Handle end of game
-look into zustand
-standardize aiVar spelling
+- QA improved ai tracking (colors have been changed and only applied to left player to make this easier)
+- Remove anys
+- standardize aiVar names
+- implement a powerup
+- implemnet an upgrade
+- Implement a backend
+  - need to store currently held upgrades, money, and in game time of user (planning on hosting a speedrunning tournament early 2024 with cash bounty)
+  - need to present next AI opponent's stats as well as rewards
+  - send 3 random upgrades which the user can potentially buy this round
+
+## powerup ideas
+
+- regenerating health -> if player uses this the player would need to sit still. If the ai used this it would be cool for a boss
+
+- we could put objects in the middle. likely will get stuck and bounce around for a bit. That's a feature.
+
+- click power ups to drive player engagmenet
+
+## upgrade ideas
+
+- it's a shop where the upgrades are random
+
+- custom enemey sound for each enemey
+
+- speed paddle can move
+- width of paddle
+
+- money printer upgrade-- prints coins on screen when ball hits coin you get upgrade money printer to get more coins
+
+- slow down region //continuos
+- hole in paddle // activated lasts x seconds // how long it stays and how many uses
+
+- spawn in more balls
+- One sided balls
+
+- more paddles // each paddle locks on to next ball
+- zombie paddle
+- stationary paddle //potentially has health
+
+- Maybe you are shown three possible oponents with varyying rewards and you can pick one
+
+- //sound effect of ball colliding is piano noise but speed of ball changes pitch
+
+## backend
+
+- how close you made it or completion time
+
+- game state how much money you have what round you are on what upgrades you have name of save
+
+- get new upgrade choices endpoint
+
+- purchased upgrade endpoint
+
+- start round endpoint
+
+- round end endpoint
+
+## useful links
+
+- https://css-tricks.com/using-requestanimationframe-with-react-hooks/
 
 ## Dev Commands
 
@@ -76,11 +90,6 @@ Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
 The page will reload if you make edits.\
 You will also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
 ### `npm run build`
 
