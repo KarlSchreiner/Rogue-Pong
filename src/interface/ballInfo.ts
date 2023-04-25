@@ -1,6 +1,5 @@
-export interface ballInfo
-{
-    posX: number,
-    posY: number,
-    dirX: number
+export interface ballInfo {
+  posX: number;
+  posY: number;
+  dirX: number;
 }
