@@ -2,7 +2,7 @@ import React, { FC, useState } from "react";
 import styles from "./TestingMenu.module.scss";
 import Slider from "@mui/material/Slider";
 import Button from "@mui/material/Button";
-import { stats } from "../../interface/stats";
+import { commonStats, teamStats } from "../../interface/stats";
 import Grid2 from "@mui/material/Unstable_Grid2";
 import { red } from "@mui/material/colors";
 import { sides, sliderColors } from "../../util/enums";
@@ -16,20 +16,28 @@ const TestingMenu: FC<TestingMenuProps> = () => {
     overheatChance: { max: 100, min: 1, step: 1, default: 20 },
     overheatLength: { max: 5000, min: 0, step: 100, default: 1000 },
     speed: { max: 1, min: 0.01, step: 0.01, default: 0.3 },
+    numPaddles: { max: 10, min: 1, step: 1, default: 2 },
+    numBalls: { max: 10, min: 1, step: 1, default: 2 },
   };
 
-  const [playerStats, setPlayerStats] = useState<stats>({
+  const [playerStats, setPlayerStats] = useState<teamStats>({
     health: sliderDefaultValues.health.default,
     overheatChance: sliderDefaultValues.overheatChance.default,
     overheatLength: sliderDefaultValues.overheatLength.default,
     speed: sliderDefaultValues.speed.default,
+    numPaddles: sliderDefaultValues.numPaddles.default,
   });
 
-  const [aiStats, setAiStats] = useState<stats>({
+  const [aiStats, setAiStats] = useState<teamStats>({
     health: sliderDefaultValues.health.default,
     overheatChance: sliderDefaultValues.overheatChance.default,
     overheatLength: sliderDefaultValues.overheatLength.default,
     speed: sliderDefaultValues.speed.default,
+    numPaddles: sliderDefaultValues.numPaddles.default,
+  });
+
+  const [commonStats, setCommonStats] = useState<commonStats>({
+    numBalls: sliderDefaultValues.numBalls.default,
   });
 
   const handlePlayerChange = (event: Event, newSpeed: number | number[]) => {
@@ -48,13 +56,29 @@ const TestingMenu: FC<TestingMenuProps> = () => {
     }
   };
 
+  const handleCommonChange = (event: Event, newSpeed: number | number[]) => {
+    if (event.target) {
+      const property = (event.target as HTMLButtonElement).name;
+      const updatedObject = { [property]: newSpeed };
+      setCommonStats((prevValue) => ({ ...prevValue, ...updatedObject }));
+    }
+  };
+
   const sliderCreator = function (
-    statsObject: stats,
+    statsObject: teamStats | commonStats,
     changeHandler: any,
     side: sides
   ) {
     return Object.keys(statsObject).map(function (key) {
-      let value = statsObject[key as keyof stats];
+      let teamCastedObject = statsObject as teamStats;
+      let commonCastedObject = statsObject as commonStats;
+      let value;
+      if (teamCastedObject.health !== undefined) {
+        value = teamCastedObject[key as keyof teamStats];
+      } else {
+        value = commonCastedObject[key as keyof commonStats];
+      }
+      // value = (statsObject as teamStats).numPaddles !== undefined ?  statsObject[key as keyof teamStats] : statsObject[key as keyof commonStats];
       return (
         <Grid2 key={`${side} ${key}`} xs={2}>
           <div>{key}</div>
@@ -89,6 +113,12 @@ const TestingMenu: FC<TestingMenuProps> = () => {
   );
   const aiSliders = sliderCreator(aiStats, handleAIChange, sides.ai);
 
+  const commonSliders = sliderCreator(
+    commonStats,
+    handleCommonChange,
+    sides.common
+  );
+
   return (
     <div className={styles.TestingMenu} data-testid="TestingMenu">
       <h3>
@@ -101,7 +131,19 @@ const TestingMenu: FC<TestingMenuProps> = () => {
       <Grid2 container spacing={2} color={red}>
         {aiSliders}
       </Grid2>
-      <Link to={`game`} state={{ aiStats: aiStats, playerStats: playerStats }}>
+
+      <Grid2 container spacing={2}>
+        {commonSliders}
+      </Grid2>
+
+      <Link
+        to={`game`}
+        state={{
+          aiStats: aiStats,
+          playerStats: playerStats,
+          commonStats: commonStats,
+        }}
+      >
         <Button variant="contained">Play!</Button>
       </Link>
     </div>

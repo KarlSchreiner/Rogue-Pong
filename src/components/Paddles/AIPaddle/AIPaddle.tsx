@@ -1,7 +1,7 @@
 import React, { FC, useEffect } from "react";
 import Paddle from "../Paddle/Paddle";
 import styles from "./AIPaddle.module.scss";
-import { stats } from "../../../interface/stats";
+import { teamStats } from "../../../interface/stats";
 
 interface AIPaddleProps {
   count: number;
@@ -9,7 +9,7 @@ interface AIPaddleProps {
   delta: number;
   ballHeight: number;
   rightPaddleSetter: any;
-  stats: stats;
+  stats: teamStats;
   backgroundColor: string;
 }
 

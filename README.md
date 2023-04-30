@@ -14,7 +14,6 @@ Expected release is late 2023!
 
 ## Tickets
 
-- QA improved ai tracking (colors have been changed and only applied to left player to make this easier)
 - Remove anys
 - standardize aiVar names
 - implement a powerup
@@ -23,6 +22,7 @@ Expected release is late 2023!
   - need to store currently held upgrades, money, and in game time of user (planning on hosting a speedrunning tournament early 2024 with cash bounty)
   - need to present next AI opponent's stats as well as rewards
   - send 3 random upgrades which the user can potentially buy this round
+- Improve AI tracking to prevent jittering
 
 ## powerup ideas
 

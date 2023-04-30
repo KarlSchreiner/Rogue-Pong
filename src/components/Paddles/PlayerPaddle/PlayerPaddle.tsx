@@ -1,7 +1,7 @@
 import React, { FC, useEffect, useState } from "react";
 import Paddle from "../Paddle/Paddle";
 import styles from "./PlayerPaddle.module.scss";
-import { stats } from "../../../interface/stats";
+import { teamStats } from "../../../interface/stats";
 
 const SPEED = 0.02;
 
@@ -11,7 +11,7 @@ interface PlayerPaddleProps {
   delta: number;
   ballHeight: number;
   leftPaddleSetter: any;
-  stats: stats;
+  stats: teamStats;
   backgroundColor: string;
 }
 

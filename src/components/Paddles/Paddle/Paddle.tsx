@@ -1,6 +1,6 @@
 import React, { FC, useEffect, Component, useRef } from "react";
 import styles from "./Paddle.module.scss";
-import { stats } from "../../../interface/stats";
+import { teamStats } from "../../../interface/stats";
 
 //sound imports
 import useSound from "use-sound";
@@ -12,7 +12,7 @@ interface PaddleProps {
   paddleIndex: number;
   delta: number;
   ballHeight: number;
-  stats: stats;
+  stats: teamStats;
   backgroundColor: string;
 }
 
@@ -78,7 +78,6 @@ const Paddle: FC<PaddleProps> = (PaddleProps) => {
   }, [PaddleProps.count]);
 
   useEffect(() => {
-    console.log("color changed");
     if (backgroundColor == "red") {
       overheatSound();
     } else {

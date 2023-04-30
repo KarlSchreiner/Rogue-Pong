@@ -8,7 +8,7 @@ import PlayerTeamHud from "../Hud/PlayerTeamHud/PlayerTeamHud";
 import { sides } from "../../util/enums";
 import AiTeamHud from "../Hud/AITeamHud/AITeamHud";
 import Hud from "../Hud/Hud";
-import { healthInterface, stats } from "../../interface/stats";
+import { healthInterface, teamStats, commonStats } from "../../interface/stats";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ballInfo } from "../../interface/ballInfo";
 import { paddleRectProperties } from "../../interface/paddleRectProperties";
@@ -18,23 +18,23 @@ interface ActiveGameProps {}
 
 const ActiveGame: FC<ActiveGameProps> = () => {
   const location = useLocation();
-  const playerStats = location.state?.playerStats as stats;
-  const aiStats = location.state?.aiStats as stats;
+  const playerStats = location.state?.playerStats as teamStats;
+  const aiStats = location.state?.aiStats as teamStats;
+  const commonStats = location.state?.commonStats as commonStats;
   const navigate = useNavigate();
 
-  //added this to highlight switching vs not switching of paddles
-  const leftPaddleColor = ["chartreuse", "green"];
-  const rightPaddleColor = ["aquamarine", "blue"];
+  const leftPaddleColor = ["chartreuse"];
+  const rightPaddleColor = ["aquamarine"];
 
   // console.log("re-rendered lmao")
 
   const [count, setCount] = useState(0);
   const [delta, setDelta] = useState(0);
   // const [ballHeight, setBallHeight] = useState(0);
-  const [balls, setBalls] = useState<ballInfo[]>([
-    { posX: 50, posY: 50, dirX: 0 },
-    { posX: 50, posY: 50, dirX: 0 },
-  ]);
+  const [balls, setBalls] = useState<ballInfo[]>(
+    Array(commonStats.numBalls).fill({ posX: 50, posY: 50, dirX: 0 })
+  );
+
   const [playerBallHeightsToUse, setPlayerBallHeightsToUse] = useState<
     number[]
   >([]);
@@ -46,16 +46,13 @@ const ActiveGame: FC<ActiveGameProps> = () => {
   // const [ballsData, setBallsData] = useState([{}]);
   const [leftPaddleRects, setLeftPaddleRects] = useState<
     paddleRectProperties[]
-  >([
-    { bottom: 0, top: 0, left: 0, right: 0 },
-    { bottom: 0, top: 0, left: 0, right: 0 },
-  ]);
+  >(
+    Array(playerStats.numPaddles).fill({ bottom: 0, top: 0, left: 0, right: 0 })
+  );
   const [rightPaddleRects, setRightPaddleRects] = useState<
     paddleRectProperties[]
-  >([
-    { bottom: 0, top: 0, left: 0, right: 0 },
-    { bottom: 0, top: 0, left: 0, right: 0 },
-  ]);
+  >(Array(aiStats.numPaddles).fill({ bottom: 0, top: 0, left: 0, right: 0 }));
+
   //todo handle when health is down to 0
   const [health, setHealth] = useState<healthInterface>({
     playerHealth: playerStats.health,
@@ -163,13 +160,13 @@ const ActiveGame: FC<ActiveGameProps> = () => {
 
         //which rect is closer to the ball?
         let closestA =
-          Math.abs(a.top - ballHeight) < Math.abs(a.top - ballHeight)
+          Math.abs(a.top - ballHeight) < Math.abs(a.bottom - ballHeight)
             ? Math.abs(a.top - ballHeight)
-            : Math.abs(a.top - ballHeight);
+            : Math.abs(a.bottom - ballHeight);
         let closestB =
-          Math.abs(b.top - ballHeight) < Math.abs(b.top - ballHeight)
+          Math.abs(b.top - ballHeight) < Math.abs(b.bottom - ballHeight)
             ? Math.abs(b.top - ballHeight)
-            : Math.abs(b.top - ballHeight);
+            : Math.abs(b.bottom - ballHeight);
         if (closestA == closestB) {
           return 0;
         } else if (closestA < closestB) {
@@ -188,6 +185,10 @@ const ActiveGame: FC<ActiveGameProps> = () => {
     );
     let playerBallHeightArrayFinal = playerPaddleObjects
       .sort((a, b) => {
+        //vain attempt to fix jittering
+        // if (Math.abs((a.top + a.bottom) / 2 - (b.top + b.bottom) / 2) < 15) {
+        //   return a.mapToLeftPadddleRects < b.mapToLeftPadddleRects ? -1 : 1;
+        // }
         if (
           a.mapToLeftPadddleRects == null &&
           b.mapToLeftPadddleRects == null
@@ -202,10 +203,11 @@ const ActiveGame: FC<ActiveGameProps> = () => {
         }
         return a.mapToLeftPadddleRects > b.mapToLeftPadddleRects ? 1 : -1;
       })
-      .map((value) =>
-        value.mapToPlayerBallHeightArray == null
-          ? 50
-          : playerBallHeightArray[value.mapToPlayerBallHeightArray]
+      .map(
+        (value) =>
+          value.mapToPlayerBallHeightArray == null
+            ? 50
+            : playerBallHeightArray[value.mapToPlayerBallHeightArray] //set ballheight for paddles to their respective balls or 50 if no other balls
       );
     console.log("playerBallHeightArrayFinal", playerBallHeightArrayFinal);
     setPlayerBallHeightsToUse(playerBallHeightArrayFinal);
@@ -278,7 +280,7 @@ const ActiveGame: FC<ActiveGameProps> = () => {
             delta={delta}
             ballHeight={AIBallHeightsToUse[rectIndex]}
             rightPaddleSetter={rightPaddleSetter}
-            backgroundColor={rightPaddleColor[rectIndex]}
+            backgroundColor={rightPaddleColor[0]}
             key={"AIPaddle" + rectIndex}
           />
         );
@@ -293,7 +295,7 @@ const ActiveGame: FC<ActiveGameProps> = () => {
             delta={delta}
             ballHeight={playerBallHeightsToUse[rectIndex]}
             leftPaddleSetter={leftPaddleSetter}
-            backgroundColor={leftPaddleColor[rectIndex]}
+            backgroundColor={leftPaddleColor[0]}
             key={"PlayerPaddle" + rectIndex}
           />
         );
