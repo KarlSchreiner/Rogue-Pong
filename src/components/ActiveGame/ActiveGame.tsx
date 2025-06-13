@@ -3,7 +3,6 @@ import Ball from "../Ball/Ball";
 import AIPaddle from "../Paddles/AIPaddle/AIPaddle";
 import PlayerPaddle from "../Paddles/PlayerPaddle/PlayerPaddle";
 import Paddle from "../Paddles/Paddle/Paddle";
-import styles from "./ActiveGame.module.scss";
 import PlayerTeamHud from "../Hud/PlayerTeamHud/PlayerTeamHud";
 import { sides } from "../../util/enums";
 import AiTeamHud from "../Hud/AITeamHud/AITeamHud";
@@ -13,6 +12,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { ballInfo } from "../../interface/ballInfo";
 import { paddleRectProperties } from "../../interface/paddleRectProperties";
 import { paddleBallMapping } from "../../interface/paddleBallMapping";
+import { GameContainer } from "./ActiveGame.styled";
 
 interface ActiveGameProps {}
 
@@ -254,7 +254,7 @@ const ActiveGame: FC<ActiveGameProps> = () => {
   }, [health]);
 
   return (
-    <div className={styles.ActiveGame} data-testid="ActiveGame">
+    <GameContainer data-testid="ActiveGame">
       {balls.map((ball: ballInfo, ballsIndex: number) => {
         return (
           <Ball
@@ -302,7 +302,7 @@ const ActiveGame: FC<ActiveGameProps> = () => {
       })}
 
       <Hud health={health}></Hud>
-    </div>
+    </GameContainer>
   );
 };
 

@@ -12,3 +12,7 @@ export interface healthInterface {
   playerHealth: number;
   aiHealth: number;
 }
+export interface metaProgression {
+  money: number;
+  // playerStats: teamStats;
+}
