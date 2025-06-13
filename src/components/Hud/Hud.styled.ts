@@ -15,6 +15,5 @@ export const HudWrapper = styled.div`
     flex-basis: 0;
     padding: 0 2vh;
     margin: 1vh 0;
-    opacity: 0.5;
   }
 `;

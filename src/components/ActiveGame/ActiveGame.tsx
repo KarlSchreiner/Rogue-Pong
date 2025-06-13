@@ -13,11 +13,14 @@ import { ballInfo } from "../../interface/ballInfo";
 import { paddleRectProperties } from "../../interface/paddleRectProperties";
 import { paddleBallMapping } from "../../interface/paddleBallMapping";
 import { GameContainer } from "./ActiveGame.styled";
+import { useDispatch } from "react-redux";
+import { advanceLevel } from "../../store/gameSlice";
 
 interface ActiveGameProps {}
 
 const ActiveGame: FC<ActiveGameProps> = () => {
   const location = useLocation();
+  const dispatch = useDispatch();
   const playerStats = location.state?.playerStats as teamStats;
   const aiStats = location.state?.aiStats as teamStats;
   const commonStats = location.state?.commonStats as commonStats;
@@ -249,6 +252,7 @@ const ActiveGame: FC<ActiveGameProps> = () => {
 
   React.useEffect(() => {
     if (health.aiHealth == 0 || health.playerHealth == 0) {
+      dispatch(advanceLevel());
       navigate("/result", { state: health });
     }
   }, [health]);

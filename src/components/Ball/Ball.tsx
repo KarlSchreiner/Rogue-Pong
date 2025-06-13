@@ -4,8 +4,8 @@ import { sides } from "../../util/enums";
 
 //sound imports
 import useSound from "use-sound";
-const playerBoopSoundImport = require("./player_boop.mp3");
-const aiBoopSoundImport = require("./ai_boop.mp3");
+const playerBoopSoundImport = require("./boop.wav");
+const aiBoopSoundImport = require("./boop.wav");
 
 interface BallProps {
   id: number;
