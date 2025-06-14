@@ -16,10 +16,11 @@ Expected release is late 2023!
 
 - Remove anys
 - standardize aiVar names
+- Have redux store be read in game loop instead of being read when calling game loop and passed as location vars 
 - implement a powerup
 - implemnet an upgrade
 - Implement a backend
-  - need to store currently held upgrades, money, and in game time of user (planning on hosting a speedrunning tournament early 2024 with cash bounty)
+  - need to store currently held upgrades, money, and in game time of user (planning on hosting a speedrunning tournament late 2025 with cash bounty)
   - need to present next AI opponent's stats as well as rewards
   - send 3 random upgrades which the user can potentially buy this round
 - Improve AI tracking to prevent jittering
