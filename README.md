@@ -6,26 +6,25 @@ This is the first ever fully React based Pong Game.
 
 The vision for this game is a rogue-like upgrade driven experience.
 
-Currently the Front end is implemented with a fully functional Pong experience all within React. At the moment all upgrades are set via the introductary debug screen.
+Currently the Front end is implemented with a fully functional Pong experience all within React.
 
 We plan on adding significantly more powerups and upgrades, creating a rogue-like experience where you purchase (hopefully synergistic) upgrades as you earn money from beating harder and harder opponents. We also will add a backend to store and serve player progress, AI opponents, and what upgrades can be purchased from the shop.
 
-Expected release is late 2023!
+Expected release is late 2025!
 
 ## Tickets
 
 - Remove anys
 - standardize aiVar names
 - Have redux store be read in game loop instead of being read when calling game loop and passed as location vars 
-- implement a powerup
-- implemnet an upgrade
 - Implement a backend
   - need to store currently held upgrades, money, and in game time of user (planning on hosting a speedrunning tournament late 2025 with cash bounty)
   - need to present next AI opponent's stats as well as rewards
   - send 3 random upgrades which the user can potentially buy this round
-- Improve AI tracking to prevent jittering
 - paddle moves slowly up and down when it cannot be mapped to a second ball
 - change component name to have .component
+- institute more powerups
+- institute meta progression
 
 ## powerup ideas
 
