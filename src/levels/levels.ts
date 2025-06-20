@@ -4,21 +4,21 @@ import { teamStats } from "../interface/stats";
 const levelEnemyStats: Record<number, teamStats> = {
   1: {
     health: 1,
-    overheatChance: 70,
+    overheatChance: 0.4,
     overheatLength: 5000,
     speed: 0.03,
     numPaddles: 1,
   },
   2: {
     health: 3,
-    overheatChance: 45,
+    overheatChance: 0.2,
     overheatLength: 3000,
     speed: 0.03,
     numPaddles: 1,
   },
   3: {
     health: 5,
-    overheatChance: 10,
+    overheatChance: 0.1,
     overheatLength: 1000,
     speed: 0.05,
     numPaddles: 2,

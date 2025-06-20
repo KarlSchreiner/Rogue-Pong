@@ -14,8 +14,8 @@ const initialState: GameState = {
   level: 1,
   playerStats: {
     health: 3,
-    overheatChance: 100,
-    overheatLength: 3000,
+    overheatChance: 0.5,
+    overheatLength: 1000,
     speed: 0.03,
     numPaddles: 1,
   },

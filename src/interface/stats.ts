@@ -1,6 +1,6 @@
 export interface teamStats {
   health: number;
-  overheatChance: number;
+  overheatChance: number; //.1 is a 10% chance
   overheatLength: number;
   speed: number;
   numPaddles: number;

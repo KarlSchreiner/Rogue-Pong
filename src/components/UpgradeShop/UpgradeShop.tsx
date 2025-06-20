@@ -33,7 +33,7 @@ const allUpgradeOptions = [
     name: "Faster Cooldown",
     description: "Shortens overheat duration",
     statKey: "overheatLength" as keyof teamStats,
-    increment: -0.25,
+    increment: -200,
   },
 ];
 

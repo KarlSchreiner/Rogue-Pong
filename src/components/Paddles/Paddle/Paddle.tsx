@@ -1,13 +1,11 @@
-import React, { FC, useEffect, Component, useRef } from "react";
+import React, { FC, useEffect, useRef, useState } from "react";
 import styles from "./Paddle.module.scss";
 import { teamStats } from "../../../interface/stats";
-
-//sound imports
 import useSound from "use-sound";
 const overheatSoundImport = require("./overheat.mp3");
 
 interface PaddleProps {
-  paddleSetter: any; //todo figure out typescript with functions!!!!!
+  paddleSetter: (index: number, rect: DOMRect) => void;
   count: number;
   paddleIndex: number;
   delta: number;
@@ -17,81 +15,87 @@ interface PaddleProps {
 }
 
 const maxDirectionInfluence = 0.666;
+const OVERHEAT_CHECK_INTERVAL = 1000; //ms
 
-const Paddle: FC<PaddleProps> = (PaddleProps) => {
-  const [position, setPosition] = React.useState(50);
-  const [localOverheatValues, setLocalOverheatValues] = React.useState({
-    localOverheatedTimer: 0,
-    isOverheated: false,
-  });
-  const [backgroundColor, setBackgroundColor] = React.useState(
-    PaddleProps.backgroundColor
+const Paddle: FC<PaddleProps> = (paddleProps) => {
+  const [position, setPosition] = useState(50);
+  const [isOverheated, setIsOverheated] = useState(false);
+  const [checkTimer, setCheckTimer] = useState(0);
+  const [overheatTimer, setOverheatTimer] = useState(0);
+  const [backgroundColor, setBackgroundColor] = useState(
+    paddleProps.backgroundColor
   );
-  const [overheatSound, overheatSoundExposed] = useSound(overheatSoundImport);
 
+  const [overheatSound, { stop: stopOverheatSound }] =
+    useSound(overheatSoundImport);
+  const paddleRef = useRef<HTMLDivElement>(null);
+
+  //event loop
   useEffect(() => {
-    if (
-      localOverheatValues.localOverheatedTimer >=
-      PaddleProps.stats.overheatLength
-    ) {
-      const isOverheating =
-        1 === Math.floor(Math.random() * PaddleProps.stats.overheatChance);
-      setLocalOverheatValues({
-        isOverheated: isOverheating,
-        localOverheatedTimer: 0,
-      });
-      setBackgroundColor(isOverheating ? "red" : PaddleProps.backgroundColor);
+    if (isOverheated) {
+      const newOverheatTimer = overheatTimer + paddleProps.delta;
+      if (newOverheatTimer >= paddleProps.stats.overheatLength) {
+        setIsOverheated(false);
+        setOverheatTimer(0);
+        setBackgroundColor(paddleProps.backgroundColor);
+        setCheckTimer(0); // <-- reset check timer on recovery to avoid immediate re-overheat
+      } else {
+        setOverheatTimer(newOverheatTimer);
+      }
     } else {
-      setLocalOverheatValues((prevValue) => ({
-        ...prevValue,
-        localOverheatedTimer:
-          prevValue.localOverheatedTimer + PaddleProps.delta,
-      }));
+      const newCheckTimer = checkTimer + paddleProps.delta;
+      if (newCheckTimer >= OVERHEAT_CHECK_INTERVAL) {
+        if (Math.random() < paddleProps.stats.overheatChance) {
+          setIsOverheated(true);
+          setOverheatTimer(0); // <-- reset overheat timer
+          setBackgroundColor("red");
+        }
+        setCheckTimer(0); // always reset after checking
+      } else {
+        setCheckTimer(newCheckTimer);
+      }
     }
 
-    //should leave the screen even if going wrogn way. NEED TO GIVE IT ACCELERATION
+    // Paddle tracking logic
     const direction =
-      PaddleProps.ballHeight - position > maxDirectionInfluence ||
-      PaddleProps.ballHeight - position < -maxDirectionInfluence
-        ? Math.sign(PaddleProps.ballHeight - position) * maxDirectionInfluence
-        : PaddleProps.ballHeight - position;
+      paddleProps.ballHeight - position > maxDirectionInfluence ||
+      paddleProps.ballHeight - position < -maxDirectionInfluence
+        ? Math.sign(paddleProps.ballHeight - position) * maxDirectionInfluence
+        : paddleProps.ballHeight - position;
+
     let newPosition =
       position +
-      PaddleProps.stats.speed *
-        PaddleProps.delta *
+      paddleProps.stats.speed *
+        paddleProps.delta *
         direction *
-        (localOverheatValues.isOverheated ? 0 : 1);
+        (isOverheated ? 0 : 1);
 
-    //prevent the paddle from overshooting the ball repeatedly, which fixes jittering on lower refresh rate screens
     if (
-      !localOverheatValues.isOverheated &&
-      ((newPosition > PaddleProps.ballHeight &&
-        PaddleProps.ballHeight > position) ||
-        (newPosition < PaddleProps.ballHeight &&
-          PaddleProps.ballHeight < position))
+      !isOverheated &&
+      ((newPosition > paddleProps.ballHeight &&
+        paddleProps.ballHeight > position) ||
+        (newPosition < paddleProps.ballHeight &&
+          paddleProps.ballHeight < position))
     ) {
-      newPosition = PaddleProps.ballHeight;
+      newPosition = paddleProps.ballHeight;
     }
 
-    // const newPosition = position + (PaddleProps.stats.speed * PaddleProps.delta *  (PaddleProps.ballHeight - position))
     setPosition(newPosition);
-  }, [PaddleProps.count]);
+  }, [paddleProps.count]);
 
   useEffect(() => {
-    if (backgroundColor == "red") {
+    if (backgroundColor === "red") {
       overheatSound();
     } else {
-      overheatSoundExposed.stop();
+      stopOverheatSound();
     }
   }, [backgroundColor]);
 
-  const paddleRef = useRef<HTMLInputElement>(null);
-
   useEffect(() => {
-    setPosition(position);
+    setPosition(position); //WHY IS THIS NECESSARY
     if (paddleRef.current) {
-      PaddleProps.paddleSetter(
-        PaddleProps.paddleIndex,
+      paddleProps.paddleSetter(
+        paddleProps.paddleIndex,
         paddleRef.current.getBoundingClientRect()
       );
     }
@@ -102,8 +106,8 @@ const Paddle: FC<PaddleProps> = (PaddleProps) => {
       ref={paddleRef}
       className={styles.Paddle}
       data-testid="Paddle"
-      style={{ top: `${position}vh`, backgroundColor: backgroundColor }}
-    ></div>
+      style={{ top: `${position}vh`, backgroundColor }}
+    />
   );
 };
 
