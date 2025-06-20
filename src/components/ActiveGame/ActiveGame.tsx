@@ -252,7 +252,7 @@ const ActiveGame: FC<ActiveGameProps> = () => {
 
   React.useEffect(() => {
     if (health.aiHealth == 0 || health.playerHealth == 0) {
-      dispatch(advanceLevel());
+      // dispatch(advanceLevel());
       navigate("/result", { state: health });
     }
   }, [health]);

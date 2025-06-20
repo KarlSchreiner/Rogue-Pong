@@ -14,7 +14,7 @@ const initialState: GameState = {
   level: 1,
   playerStats: {
     health: 3,
-    overheatChance: 50,
+    overheatChance: 100,
     overheatLength: 3000,
     speed: 0.03,
     numPaddles: 1,
@@ -29,8 +29,8 @@ const gameSlice = createSlice({
   initialState,
   reducers: {
     advanceLevel(state) {
-      console.log("I am being called to increment state");
       state.level += 1;
+      console.log(`current level is ${state.level}`);
       state.aiStats = getEnemyStats(state.level);
     },
     updatePlayerStats(state, action: PayloadAction<Partial<teamStats>>) {
@@ -39,13 +39,26 @@ const gameSlice = createSlice({
     updateMeta(state, action: PayloadAction<Partial<metaProgression>>) {
       state.meta = { ...state.meta, ...action.payload };
     },
+    upgradePlayerStat: (
+      state,
+      action: PayloadAction<{ statKey: keyof teamStats; increment: number }>
+    ) => {
+      const { statKey, increment } = action.payload;
+      state.playerStats[statKey] += increment;
+    },
+
     resetGame(state) {
       return initialState;
     },
   },
 });
 
-export const { advanceLevel, updatePlayerStats, updateMeta, resetGame } =
-  gameSlice.actions;
+export const {
+  advanceLevel,
+  updatePlayerStats,
+  updateMeta,
+  resetGame,
+  upgradePlayerStat,
+} = gameSlice.actions;
 
 export default gameSlice.reducer;

@@ -24,6 +24,8 @@ Expected release is late 2023!
   - need to present next AI opponent's stats as well as rewards
   - send 3 random upgrades which the user can potentially buy this round
 - Improve AI tracking to prevent jittering
+- paddle moves slowly up and down when it cannot be mapped to a second ball
+- change component name to have .component
 
 ## powerup ideas
 
@@ -41,6 +43,8 @@ Expected release is late 2023!
 
 - speed paddle can move
 - width of paddle
+- more paddles // each paddle locks on to next ball
+- more health
 
 - money printer upgrade-- prints coins on screen when ball hits coin you get upgrade money printer to get more coins
 
@@ -50,13 +54,20 @@ Expected release is late 2023!
 - spawn in more balls
 - One sided balls
 
-- more paddles // each paddle locks on to next ball
 - zombie paddle
 - stationary paddle //potentially has health
 
 - Maybe you are shown three possible oponents with varyying rewards and you can pick one
 
 - //sound effect of ball colliding is piano noise but speed of ball changes pitch
+
+# meta progression system
+
+- possibility of having more starting money
+- can choose / bias which upgrade are in the shop
+- can just have some upgrades out the gate
+- more random options to choose from
+- get a chance to do a reshuffle
 
 ## backend
 

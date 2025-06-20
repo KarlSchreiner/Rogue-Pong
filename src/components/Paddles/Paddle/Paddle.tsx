@@ -34,13 +34,13 @@ const Paddle: FC<PaddleProps> = (PaddleProps) => {
       localOverheatValues.localOverheatedTimer >=
       PaddleProps.stats.overheatLength
     ) {
-      const isWrongWay =
+      const isOverheating =
         1 === Math.floor(Math.random() * PaddleProps.stats.overheatChance);
       setLocalOverheatValues({
-        isOverheated: isWrongWay,
+        isOverheated: isOverheating,
         localOverheatedTimer: 0,
       });
-      setBackgroundColor(isWrongWay ? "red" : PaddleProps.backgroundColor);
+      setBackgroundColor(isOverheating ? "red" : PaddleProps.backgroundColor);
     } else {
       setLocalOverheatValues((prevValue) => ({
         ...prevValue,

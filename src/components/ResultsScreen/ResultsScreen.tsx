@@ -1,8 +1,5 @@
-import React, { FC, useEffect } from "react";
-import { useLocation } from "react-router-dom";
-import { healthInterface } from "../../interface/stats";
-import HealthDisplay from "../Hud/healthDisplay/healthDisplay";
-import styles from "./ResultsScreen.module.scss";
+import React, { FC, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   Card,
   CardContent,
@@ -14,29 +11,51 @@ import {
 import { StyledLink } from "../HomeScreen/HomeScreen.styled";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../store";
-import { advanceLevel } from "../../store/gameSlice";
+import { advanceLevel, upgradePlayerStat } from "../../store/gameSlice";
 import { GameContainer } from "./ResultsScreen.styled";
+import UpgradeShop from "../UpgradeShop/UpgradeShop";
+import { healthInterface, teamStats } from "../../interface/stats";
+import levelEnemyStats from "../../levels/levels";
 
-interface ResultsScreenProps {}
-
-const ResultsScreen: FC<ResultsScreenProps> = () => {
+const ResultsScreen: FC = () => {
   const location = useLocation();
-  const health = location.state
-    ? (location.state as healthInterface)
-    : ({ playerHealth: 0, aiHealth: 0 } as healthInterface);
+  const navigate = useNavigate();
+  const health = (location.state as healthInterface) ?? {
+    playerHealth: 0,
+    aiHealth: 0,
+  };
   const playerWon = health.playerHealth > health.aiHealth;
-
-  const dispatch = useDispatch();
   const gameStats = useSelector((state: RootState) => state.game);
+  const dispatch = useDispatch();
 
-  // useEffect(() => {
-  //   if (playerWon) {
-  //     dispatch(advanceLevel());
-  //   }
-  // }, [dispatch, playerWon]);
+  const [selectedUpgrade, setSelectedUpgrade] = useState<{
+    statKey: keyof teamStats;
+    increment: number;
+  } | null>(null);
+
+  const handleNextLevel = () => {
+    let updatedPlayerStats = { ...gameStats.playerStats };
+    let updatedAiStats = levelEnemyStats[gameStats.level + 1];
+    if (selectedUpgrade) {
+      updatedPlayerStats[selectedUpgrade.statKey] += selectedUpgrade.increment;
+      dispatch(upgradePlayerStat(selectedUpgrade));
+    }
+    dispatch(advanceLevel());
+
+    navigate("/game", {
+      state: {
+        aiStats: updatedAiStats,
+        playerStats: updatedPlayerStats,
+        commonStats: gameStats.commonStats,
+      },
+    });
+  };
 
   return (
     <GameContainer>
+      {playerWon && (
+        <UpgradeShop onSelect={(upgrade) => setSelectedUpgrade(upgrade)} />
+      )}
       <Box
         display="flex"
         justifyContent="center"
@@ -81,18 +100,14 @@ const ResultsScreen: FC<ResultsScreenProps> = () => {
                 </Button>
               )}
               {playerWon && (
-                <StyledLink
-                  to="/game"
-                  state={{
-                    aiStats: gameStats.aiStats,
-                    playerStats: gameStats.playerStats,
-                    commonStats: gameStats.commonStats,
-                  }}
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={handleNextLevel}
+                  disabled={!selectedUpgrade}
                 >
-                  <Button variant="contained" color="primary">
-                    Play Next Level
-                  </Button>{" "}
-                </StyledLink>
+                  Play Next Level
+                </Button>
               )}
             </Box>
           </CardContent>
@@ -101,4 +116,5 @@ const ResultsScreen: FC<ResultsScreenProps> = () => {
     </GameContainer>
   );
 };
+
 export default ResultsScreen;
