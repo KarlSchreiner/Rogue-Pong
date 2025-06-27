@@ -9,3 +9,7 @@ export enum sliderColors {
   ai = "red",
   common = "green",
 }
+export enum paddleTypes {
+  regular = "regular",
+  zombie = "zombie",
+}

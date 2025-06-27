@@ -18,6 +18,7 @@ const initialState: GameState = {
     overheatLength: 1000,
     speed: 0.03,
     numPaddles: 1,
+    numZombiePaddles: 0,
   },
   aiStats: getEnemyStats(1),
   commonStats: { numBalls: 1 },

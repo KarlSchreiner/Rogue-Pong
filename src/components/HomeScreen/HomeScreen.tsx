@@ -11,27 +11,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../store";
 import { resetGame } from "../../store/gameSlice";
 
-// Example placeholder stats
-const aiStats = {
-  health: 1,
-  overheatChance: 0.2,
-  overheatLength: 3,
-  speed: 0.5,
-  numPaddles: 1,
-};
-
-const playerStats = {
-  health: 3,
-  overheatChance: 0.1,
-  overheatLength: 2,
-  speed: 1,
-  numPaddles: 1,
-};
-
-const commonStats = {
-  ballSpeed: 7,
-};
-
 const HomeScreen: React.FC = () => {
   const dispatch = useDispatch();
   const gameStats = useSelector((state: RootState) => state.game);

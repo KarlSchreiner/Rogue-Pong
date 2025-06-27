@@ -35,6 +35,12 @@ const allUpgradeOptions = [
     statKey: "overheatLength" as keyof teamStats,
     increment: -200,
   },
+  {
+    name: "Zombie Paddle",
+    description: "Aimlessley goes up and down",
+    statKey: "numZombiePaddles" as keyof teamStats,
+    increment: 1,
+  },
 ];
 
 const getRandomUpgrades = (count: number) => {

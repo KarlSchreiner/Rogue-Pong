@@ -3,7 +3,9 @@ export interface teamStats {
   overheatChance: number; //.1 is a 10% chance
   overheatLength: number;
   speed: number;
+
   numPaddles: number;
+  numZombiePaddles: number;
 }
 export interface commonStats {
   numBalls: number;

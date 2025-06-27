@@ -8,6 +8,7 @@ const levelEnemyStats: Record<number, teamStats> = {
     overheatLength: 5000,
     speed: 0.03,
     numPaddles: 1,
+    numZombiePaddles: 0,
   },
   2: {
     health: 3,
@@ -15,6 +16,7 @@ const levelEnemyStats: Record<number, teamStats> = {
     overheatLength: 3000,
     speed: 0.03,
     numPaddles: 1,
+    numZombiePaddles: 1,
   },
   3: {
     health: 5,
@@ -22,6 +24,7 @@ const levelEnemyStats: Record<number, teamStats> = {
     overheatLength: 1000,
     speed: 0.05,
     numPaddles: 2,
+    numZombiePaddles: 0,
   },
   // Add more levels as needed
 };

@@ -26,6 +26,7 @@ const TestingMenu: FC<TestingMenuProps> = () => {
     overheatLength: sliderDefaultValues.overheatLength.default,
     speed: sliderDefaultValues.speed.default,
     numPaddles: sliderDefaultValues.numPaddles.default,
+    numZombiePaddles: 0,
   });
 
   const [aiStats, setAiStats] = useState<teamStats>({
@@ -34,6 +35,7 @@ const TestingMenu: FC<TestingMenuProps> = () => {
     overheatLength: sliderDefaultValues.overheatLength.default,
     speed: sliderDefaultValues.speed.default,
     numPaddles: sliderDefaultValues.numPaddles.default,
+    numZombiePaddles: 0,
   });
 
   const [commonStats, setCommonStats] = useState<commonStats>({

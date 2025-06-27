@@ -4,7 +4,7 @@ import AIPaddle from "../Paddles/AIPaddle/AIPaddle";
 import PlayerPaddle from "../Paddles/PlayerPaddle/PlayerPaddle";
 import Paddle from "../Paddles/Paddle/Paddle";
 import PlayerTeamHud from "../Hud/PlayerTeamHud/PlayerTeamHud";
-import { sides } from "../../util/enums";
+import { paddleTypes, sides } from "../../util/enums";
 import AiTeamHud from "../Hud/AITeamHud/AITeamHud";
 import Hud from "../Hud/Hud";
 import { healthInterface, teamStats, commonStats } from "../../interface/stats";
@@ -49,12 +49,40 @@ const ActiveGame: FC<ActiveGameProps> = () => {
   // const [ballsData, setBallsData] = useState([{}]);
   const [leftPaddleRects, setLeftPaddleRects] = useState<
     paddleRectProperties[]
-  >(
-    Array(playerStats.numPaddles).fill({ bottom: 0, top: 0, left: 0, right: 0 })
-  );
+  >([
+    ...Array(playerStats.numPaddles).fill({
+      bottom: 0,
+      top: 0,
+      left: 0,
+      right: 0,
+      paddleType: paddleTypes.regular,
+    }),
+    ...Array(playerStats.numZombiePaddles).fill({
+      bottom: 0,
+      top: 0,
+      left: 0,
+      right: 0,
+      paddleType: paddleTypes.zombie,
+    }),
+  ]);
   const [rightPaddleRects, setRightPaddleRects] = useState<
     paddleRectProperties[]
-  >(Array(aiStats.numPaddles).fill({ bottom: 0, top: 0, left: 0, right: 0 }));
+  >([
+    ...Array(aiStats.numPaddles).fill({
+      bottom: 0,
+      top: 0,
+      left: 0,
+      right: 0,
+      paddleType: paddleTypes.regular,
+    }),
+    ...Array(aiStats.numZombiePaddles).fill({
+      bottom: 0,
+      top: 0,
+      left: 0,
+      right: 0,
+      paddleType: paddleTypes.zombie,
+    }),
+  ]);
 
   //todo handle when health is down to 0
   const [health, setHealth] = useState<healthInterface>({
@@ -78,20 +106,37 @@ const ActiveGame: FC<ActiveGameProps> = () => {
     });
   };
 
-  const leftPaddleSetter = (index: number, leftPaddleRect: DOMRect) => {
-    setLeftPaddleRects((prevValue) => {
-      let ArrayCopy = [...prevValue];
-      ArrayCopy[index] = leftPaddleRect;
-      return ArrayCopy;
+  const updatePaddleRects = (
+    setPaddleRects: React.Dispatch<
+      React.SetStateAction<paddleRectProperties[]>
+    >,
+    index: number,
+    rect: DOMRect
+  ) => {
+    setPaddleRects((prevValue) => {
+      const arrayCopy = [...prevValue];
+      const existingPaddleType =
+        arrayCopy[index]?.paddleType ?? paddleTypes.regular;
+
+      const updatedRect: paddleRectProperties = {
+        bottom: rect.bottom,
+        top: rect.top,
+        left: rect.left,
+        right: rect.right,
+        paddleType: existingPaddleType,
+      };
+
+      arrayCopy[index] = updatedRect;
+      return arrayCopy;
     });
   };
 
-  const rightPaddleSetter = (index: number, rightPaddleRect: DOMRect) => {
-    setRightPaddleRects((prevValue) => {
-      let ArrayCopy = [...prevValue];
-      ArrayCopy[index] = rightPaddleRect;
-      return ArrayCopy;
-    });
+  const leftPaddleSetter = (index: number, rect: DOMRect) => {
+    updatePaddleRects(setLeftPaddleRects, index, rect);
+  };
+
+  const rightPaddleSetter = (index: number, rect: DOMRect) => {
+    updatePaddleRects(setRightPaddleRects, index, rect);
   };
 
   const healthSetter = (numChanged: number, who: sides) => {
@@ -112,7 +157,15 @@ const ActiveGame: FC<ActiveGameProps> = () => {
   //   setCount(count + 1);
   // };
 
-  const setBallHeightHelper = (isPlayer: boolean) => {
+  /**
+   * Sorts balls based on approach direction and position, returning an array of their Y positions.
+   * For player paddles, prioritizes balls moving towards the player (dirX < 0).
+   * For AI paddles, prioritizes balls moving towards the AI (dirX > 0).
+   *
+   * @param isPlayer - true if calculating for player paddles, false for AI paddles
+   * @returns number[] - Array of ball Y positions sorted by approach priority
+   */
+  const setBallHeightHelper = (isPlayer: boolean): number[] => {
     return [...balls]
       .sort((a, b) => {
         if (a.dirX > 0 && b.dirX < 0) {
@@ -128,106 +181,75 @@ const ActiveGame: FC<ActiveGameProps> = () => {
       .map((ballInfo) => ballInfo.posY);
   };
 
-  React.useEffect(() => {
-    //need to add a check for is frozen
-    //first lets get a list ordered by closeness of balls of the ball heights
-    let playerBallHeightArray = setBallHeightHelper(true).slice(
+  /**
+   * Maps paddles to the closest available balls based on vertical distance.
+   * Ensures that each paddle moves toward the nearest ball approaching its side.
+   * For player paddles, prioritizes balls moving left (toward player).
+   * For AI paddles, prioritizes balls moving right (toward AI).
+   *
+   * @param paddleRects - Array of paddle DOMRects with paddle type information
+   * @param isPlayer - true if calculating for player paddles, false for AI paddles
+   * @returns number[] - Array of target Y positions for each paddle
+   */
+  const calculatePaddleBallHeights = (
+    paddleRects: paddleRectProperties[],
+    isPlayer: boolean
+  ): number[] => {
+    const ballHeightArray = setBallHeightHelper(isPlayer).slice(
       0,
-      leftPaddleRects.length
+      paddleRects.length
     );
-    //create array of objects to track relationship between balls and paddles note top and bottom of rects must be divided by outerheight and multiplied by 100 to convert to relative position like ball uses
-    let playerPaddleObjects: paddleBallMapping[] = leftPaddleRects.map(
-      (value, leftPaddleRectsIndex) => {
-        return {
-          top: (value.top / window.innerHeight) * 100, //should this be inner or outter...???
-          bottom: (value.bottom / window.innerHeight) * 100,
-          hasBeenUsed: false,
-          mapToPlayerBallHeightArray: null,
-          mapToLeftPadddleRects: leftPaddleRectsIndex,
-        };
-      }
-    );
-    playerBallHeightArray.forEach((ballHeight, indexOfBallHeight) => {
-      //just sort the playerBall objects array and give front most object next ball assignment
-      playerPaddleObjects.sort((a, b) => {
-        //if already been used go to the back
-        if (a.hasBeenUsed && b.hasBeenUsed) {
-          return 0;
-        }
-        if (a.hasBeenUsed) {
-          return 1;
-        }
-        if (b.hasBeenUsed) {
-          return -1;
-        }
 
-        //which rect is closer to the ball?
-        let closestA =
-          Math.abs(a.top - ballHeight) < Math.abs(a.bottom - ballHeight)
-            ? Math.abs(a.top - ballHeight)
-            : Math.abs(a.bottom - ballHeight);
-        let closestB =
-          Math.abs(b.top - ballHeight) < Math.abs(b.bottom - ballHeight)
-            ? Math.abs(b.top - ballHeight)
-            : Math.abs(b.bottom - ballHeight);
-        if (closestA == closestB) {
-          return 0;
-        } else if (closestA < closestB) {
-          return -1;
-        } else {
-          return 1;
-        }
-      });
-      playerPaddleObjects[0].hasBeenUsed = true;
-      playerPaddleObjects[0].mapToPlayerBallHeightArray = indexOfBallHeight;
-    });
-    console.log(
-      "player paddle objects",
-      playerPaddleObjects,
-      playerBallHeightArray
-    );
-    let playerBallHeightArrayFinal = playerPaddleObjects
-      .sort((a, b) => {
-        //vain attempt to fix jittering
-        // if (Math.abs((a.top + a.bottom) / 2 - (b.top + b.bottom) / 2) < 15) {
-        //   return a.mapToLeftPadddleRects < b.mapToLeftPadddleRects ? -1 : 1;
-        // }
-        if (
-          a.mapToLeftPadddleRects == null &&
-          b.mapToLeftPadddleRects == null
-        ) {
-          return 0;
-        }
-        if (a.mapToLeftPadddleRects == null) {
-          return 1;
-        }
-        if (b.mapToLeftPadddleRects == null) {
-          return -1;
-        }
-        return a.mapToLeftPadddleRects > b.mapToLeftPadddleRects ? 1 : -1;
+    const paddleObjects: paddleBallMapping[] = paddleRects.map(
+      (value, index) => ({
+        top: (value.top / window.innerHeight) * 100,
+        bottom: (value.bottom / window.innerHeight) * 100,
+        hasBeenUsed: false,
+        mapToPlayerBallHeightArray: null,
+        mapToLeftPadddleRects: index,
       })
-      .map(
-        (value) =>
-          value.mapToPlayerBallHeightArray == null
-            ? 50
-            : playerBallHeightArray[value.mapToPlayerBallHeightArray] //set ballheight for paddles to their respective balls or 50 if no other balls
+    );
+
+    // Assign each paddle to the closest available ball
+    ballHeightArray.forEach((ballHeight, indexOfBallHeight) => {
+      paddleObjects.sort((a, b) => {
+        if (a.hasBeenUsed && b.hasBeenUsed) return 0;
+        if (a.hasBeenUsed) return 1;
+        if (b.hasBeenUsed) return -1;
+
+        const closestA = Math.min(
+          Math.abs(a.top - ballHeight),
+          Math.abs(a.bottom - ballHeight)
+        );
+        const closestB = Math.min(
+          Math.abs(b.top - ballHeight),
+          Math.abs(b.bottom - ballHeight)
+        );
+        return closestA - closestB;
+      });
+
+      paddleObjects[0].hasBeenUsed = true;
+      paddleObjects[0].mapToPlayerBallHeightArray = indexOfBallHeight;
+    });
+
+    // Return array of target ball heights for each paddle (or default to 50 if no ball assigned)
+    return paddleObjects
+      .sort(
+        (a, b) =>
+          (a.mapToLeftPadddleRects ?? 0) - (b.mapToLeftPadddleRects ?? 0)
+      )
+      .map((obj) =>
+        obj.mapToPlayerBallHeightArray == null
+          ? 50
+          : ballHeightArray[obj.mapToPlayerBallHeightArray]
       );
-    console.log("playerBallHeightArrayFinal", playerBallHeightArrayFinal);
-    setPlayerBallHeightsToUse(playerBallHeightArrayFinal);
+  };
 
-    // playerBallHeightArray.forEach((ballHeight) => {
-    //   let indexToAssignHeightTo = -1
-    //   playerBallHeightsToUse.forEach((previouslyAssignedBallHeight, index) => {
-    //     if(previouslyAssignedBallHeight != null)
-    //     {
-
-    //     }
-    //   })
-    // })
-
-    // setPlayerBallHeightsToUse(setBallHeightHelper(true))
-
-    setAIBallHeightsToUse(setBallHeightHelper(false));
+  React.useEffect(() => {
+    setPlayerBallHeightsToUse(
+      calculatePaddleBallHeights(leftPaddleRects, true)
+    );
+    setAIBallHeightsToUse(calculatePaddleBallHeights(rightPaddleRects, false));
   }, [balls]);
 
   React.useEffect(() => {
@@ -281,11 +303,13 @@ const ActiveGame: FC<ActiveGameProps> = () => {
             stats={aiStats}
             count={count}
             paddleIndex={rectIndex}
+            paddleRect={rect}
             delta={delta}
             ballHeight={AIBallHeightsToUse[rectIndex]}
             rightPaddleSetter={rightPaddleSetter}
             backgroundColor={rightPaddleColor[0]}
             key={"AIPaddle" + rectIndex}
+            inUse={rectIndex < balls.length}
           />
         );
       })}
@@ -296,11 +320,13 @@ const ActiveGame: FC<ActiveGameProps> = () => {
             stats={playerStats}
             count={count}
             paddleIndex={rectIndex}
+            paddleRect={rect}
             delta={delta}
             ballHeight={playerBallHeightsToUse[rectIndex]}
             leftPaddleSetter={leftPaddleSetter}
             backgroundColor={leftPaddleColor[0]}
             key={"PlayerPaddle" + rectIndex}
+            inUse={rectIndex < balls.length}
           />
         );
       })}

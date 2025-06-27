@@ -16,7 +16,9 @@ Expected release is late 2025!
 
 - Remove anys
 - standardize aiVar names
-- Have redux store be read in game loop instead of being read when calling game loop and passed as location vars 
+- Have redux store be read in game loop instead of being read when calling game loop and passed as location vars
+- implement a powerup
+- implemnet an upgrade
 - Implement a backend
   - need to store currently held upgrades, money, and in game time of user (planning on hosting a speedrunning tournament late 2025 with cash bounty)
   - need to present next AI opponent's stats as well as rewards
@@ -25,6 +27,7 @@ Expected release is late 2025!
 - change component name to have .component
 - institute more powerups
 - institute meta progression
+- if there are two paddles whichever paddle is closest to the ball should snap onto the ball rather than there being just 1 paddle which is in use
 
 ## powerup ideas
 
@@ -40,10 +43,7 @@ Expected release is late 2025!
 
 - custom enemey sound for each enemey
 
-- speed paddle can move
 - width of paddle
-- more paddles // each paddle locks on to next ball
-- more health
 
 - money printer upgrade-- prints coins on screen when ball hits coin you get upgrade money printer to get more coins
 
