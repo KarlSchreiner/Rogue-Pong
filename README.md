@@ -28,6 +28,9 @@ Expected release is late 2025!
 - institute more powerups
 - institute meta progression
 - if there are two paddles whichever paddle is closest to the ball should snap onto the ball rather than there being just 1 paddle which is in use
+- if there are multiple zombie paddles they should be spaced out (maybe randomize start positon and movement)
+- player controlled paddle added to the paddle type which will attempt to move toward the mouse
+- number of balls should scale with levels
 
 ## powerup ideas
 
@@ -59,6 +62,10 @@ Expected release is late 2025!
 - Maybe you are shown three possible oponents with varyying rewards and you can pick one
 
 - //sound effect of ball colliding is piano noise but speed of ball changes pitch
+
+- there should be multiple upgrade pulls?
+
+- upgrade pulls should have raririties
 
 # meta progression system
 
